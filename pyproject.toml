@@ -19,11 +19,3 @@ coverage = "^5.2.1"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
-
-[coverage:report]
-fail_under = "90"
-show_missing = "True"
-skip_covered = "True"
-
-[coverage:run]
-omit = "manage.py"
