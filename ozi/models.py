@@ -1,3 +1,16 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 
-# Create your models here.
+User = get_user_model()
+
+
+class Client(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = "client"
+        verbose_name_plural = "clients"
