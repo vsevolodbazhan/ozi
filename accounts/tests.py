@@ -7,13 +7,15 @@ fake = Faker()
 
 
 class TestModels(TestCase):
+    def setUp(self):
+        self.email = fake.email()
+        self.password = fake.password()
+
     def test_user_creation(self):
-        email, password = fake.email(), fake.password()
+        user = User.objects.create_user(email=self.email, password=self.password)
 
-        user = User.objects.create_user(email=email, password=password)
-
-        self.assertEqual(user.email, email)
-        self.assertTrue(user.check_password(password))
+        self.assertEqual(user.email, self.email)
+        self.assertTrue(user.check_password(self.password))
         self.assertTrue(user.is_active)
         self.assertFalse(user.is_staff)
         self.assertFalse(user.is_superuser)
@@ -22,15 +24,13 @@ class TestModels(TestCase):
             user.username
 
         with self.assertRaises(ValueError):
-            User.objects.create_user(email="", password=password)
+            User.objects.create_user(email="", password=self.password)
 
     def test_superuser_creation(self):
-        email, password = fake.email(), fake.password()
+        user = User.objects.create_superuser(email=self.email, password=self.password)
 
-        user = User.objects.create_superuser(email=email, password=password)
-
-        self.assertEqual(user.email, email)
-        self.assertTrue(user.check_password(password))
+        self.assertEqual(user.email, self.email)
+        self.assertTrue(user.check_password(self.password))
         self.assertTrue(user.is_active)
         self.assertTrue(user.is_staff)
         self.assertTrue(user.is_superuser)
@@ -39,15 +39,26 @@ class TestModels(TestCase):
             user.username
 
         with self.assertRaises(ValueError):
-            User.objects.create_superuser(email=email, password=email, is_staff=False)
+            User.objects.create_superuser(
+                email=self.email, password=self.password, is_staff=False
+            )
 
         with self.assertRaises(ValueError):
             User.objects.create_superuser(
-                email=email, password=email, is_superuser=False
+                email=self.email, password=self.password, is_superuser=False
             )
 
-    def test_user_is_represented_by_email(self):
-        email, password = fake.email(), fake.password()
-        user = User.objects.create_user(email=email, password=password)
+    def test_string_representation(self):
+        user = User.objects.create_user(email=self.email, password=self.password)
 
         self.assertEqual(str(user), user.email)
+
+    def test_verbose_name(self):
+        verbose_name = User._meta.verbose_name
+
+        self.assertEqual(verbose_name, "user")
+
+    def test_verbose_name_plural(self):
+        verbose_name_plural = User._meta.verbose_name_plural
+
+        self.assertEqual(verbose_name_plural, "users")
