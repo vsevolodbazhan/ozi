@@ -21,12 +21,12 @@ class TestMailing(TestCase):
     def test_verbose_name(self):
         verbose_name = Mailing._meta.verbose_name
 
-        self.assertEqual(verbose_name, "mailing")
+        self.assertEqual(verbose_name, "Mailing")
 
     def test_verbose_name_plural(self):
         verbose_name_plural = Mailing._meta.verbose_name_plural
 
-        self.assertEqual(verbose_name_plural, "mailing")
+        self.assertEqual(verbose_name_plural, "Mailings")
 
     def test_unique_contraints(self):
         name = fake.pystr()
@@ -45,12 +45,12 @@ class TestClient(TestCase):
     def test_verbose_name(self):
         verbose_name = Client._meta.verbose_name
 
-        self.assertEqual(verbose_name, "client")
+        self.assertEqual(verbose_name, "Client")
 
     def test_verbose_name_plural(self):
         verbose_name_plural = Client._meta.verbose_name_plural
 
-        self.assertEqual(verbose_name_plural, "clients")
+        self.assertEqual(verbose_name_plural, "Clients")
 
     def test_unique_contraints(self):
         bot, chat = fake.pystr(), fake.pystr()

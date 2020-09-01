@@ -61,9 +61,9 @@ class TestModels(TestCase):
     def test_verbose_name(self):
         verbose_name = User._meta.verbose_name
 
-        self.assertEqual(verbose_name, "user")
+        self.assertEqual(verbose_name, "User")
 
     def test_verbose_name_plural(self):
         verbose_name_plural = User._meta.verbose_name_plural
 
-        self.assertEqual(verbose_name_plural, "users")
+        self.assertEqual(verbose_name_plural, "Users")

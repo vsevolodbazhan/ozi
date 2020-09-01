@@ -25,8 +25,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.email
 
     class Meta:
-        verbose_name = "user"
-        verbose_name_plural = "users"
+        verbose_name = "User"
+        verbose_name_plural = "Users"
 
 
 @receiver(post_save, sender=User)

@@ -16,8 +16,8 @@ class Mailing(models.Model):
             "user",
             "name",
         )
-        verbose_name = "mailing"
-        verbose_name_plural = "mailing"
+        verbose_name = "Mailing"
+        verbose_name_plural = "Mailings"
 
 
 class Client(models.Model):
@@ -33,5 +33,5 @@ class Client(models.Model):
             "bot",
             "chat",
         )
-        verbose_name = "client"
-        verbose_name_plural = "clients"
+        verbose_name = "Client"
+        verbose_name_plural = "Clients"
