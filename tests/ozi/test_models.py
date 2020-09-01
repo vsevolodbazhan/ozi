@@ -55,3 +55,17 @@ class TestClient:
         with pytest.raises(IntegrityError):
             for _ in range(2):
                 Client.objects.create(bot=bot, chat=chat)
+
+    def test_client_is_subscribed(self, user, faker):
+        mailing = Mailing.objects.create(user=user, name=faker.pystr())
+        client = Client.objects.create(bot=faker.pystr(), chat=faker.pystr())
+
+        client.subscriptions.add(mailing)
+
+        assert client.is_subscribed(mailing)
+
+    def test_client_is_not_subscribed(self, user, faker):
+        mailing = Mailing.objects.create(user=user, name=faker.pystr())
+        client = Client.objects.create(bot=faker.pystr(), chat=faker.pystr())
+
+        assert client.is_subscribed(mailing) is False
