@@ -1,0 +1,83 @@
+openapi: 3.0.3
+
+info:
+  title: Ozi
+  version: 0.1.0
+  description: Управление рассылками.
+  x-config:
+    schema:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Токен аутинтификации
+      required:
+        - token
+
+components:
+  schemas:
+    Detail:
+      type: object
+      properties:
+        detail:
+          type: string
+          description: Подробности
+      required:
+        - detail
+    Error:
+      type: object
+      properties:
+        error:
+          type: string
+          description: Ошибка
+      required:
+        - error
+
+  responses:
+    TokenError:
+      description: Неверный токен аутинтификации
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Detail"
+    UnknownError:
+      description: Что-то пошло не так
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+paths:
+  /mailings:
+    post:
+      operationId: listMailings
+      summary: Получить список рассылок
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                config:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
+              required:
+                - config
+      responses:
+        200:
+          description: Рассылки
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  mailings:
+                    type: string
+                    description: Список рассылок
+                required:
+                  - mailings
+        204:
+          description: Нет доступных рассылок
+        401:
+          $ref: "#/components/responses/TokenError"
+        500:
+          $ref: "#/components/responses/UnknownError"
