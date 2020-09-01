@@ -6,13 +6,10 @@ from rest_framework.exceptions import AuthenticationFailed
 from accounts.models import Token
 
 from ..authentication import ConfigAuthentication
+from ..utilities import build_config
 
 User = get_user_model()
 fake = Faker()
-
-
-def build_config(data):
-    return {"config": data}
 
 
 class TestConfigAuthentication(TestCase):
