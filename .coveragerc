@@ -1,6 +1,6 @@
 [coverage:run]
 source = .
-omit = */config/*
+omit = */config/*, manage.py
 
 [coverage:report]
 fail_under = 90
