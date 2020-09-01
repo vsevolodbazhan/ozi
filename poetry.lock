@@ -76,6 +76,25 @@ argon2 = ["argon2-cffi (>=16.1.0)"]
 bcrypt = ["bcrypt"]
 
 [[package]]
+category = "main"
+description = "Web APIs for Django, made easy."
+name = "djangorestframework"
+optional = false
+python-versions = ">=3.5"
+version = "3.11.1"
+
+[package.dependencies]
+django = ">=1.11"
+
+[[package]]
+category = "main"
+description = "Camel case JSON support for Django REST framework."
+name = "djangorestframework-camel-case"
+optional = false
+python-versions = ">=3.5"
+version = "1.2.0"
+
+[[package]]
 category = "dev"
 description = "Faker is a Python package that generates fake data for you."
 name = "faker"
@@ -229,7 +248,7 @@ python-versions = "*"
 version = "3.7.4.3"
 
 [metadata]
-content-hash = "ba4b90620b5843c54aeaf4d18092b14d4a6837a9c55fa84632c1f6c38d4bb19b"
+content-hash = "f0c2e41fe0313834c5f6770f3514b3f5691c5e2f4cf5f01b88afaec9b9f91c02"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -288,6 +307,13 @@ coverage = [
 django = [
     {file = "Django-3.1-py3-none-any.whl", hash = "sha256:1a63f5bb6ff4d7c42f62a519edc2adbb37f9b78068a5a862beff858b68e3dc8b"},
     {file = "Django-3.1.tar.gz", hash = "sha256:2d390268a13c655c97e0e2ede9d117007996db692c1bb93eabebd4fb7ea7012b"},
+]
+djangorestframework = [
+    {file = "djangorestframework-3.11.1-py3-none-any.whl", hash = "sha256:8b1ac62c581dbc5799b03e535854b92fc4053ecfe74bad3f9c05782063d4196b"},
+    {file = "djangorestframework-3.11.1.tar.gz", hash = "sha256:6dd02d5a4bd2516fb93f80360673bf540c3b6641fec8766b1da2870a5aa00b32"},
+]
+djangorestframework-camel-case = [
+    {file = "djangorestframework-camel-case-1.2.0.tar.gz", hash = "sha256:9714d43fba5bb654057c29501649684d3d9f11a92319ae417fd4d65e80d1159d"},
 ]
 faker = [
     {file = "Faker-4.1.2-py3-none-any.whl", hash = "sha256:bc4b8c908dfcd84e4fe5d9fa2e52fbe17546515fb8f126909b98c47badf05658"},

@@ -8,6 +8,8 @@ license = "MIT"
 [tool.poetry.dependencies]
 python = "^3.8"
 Django = "^3.1"
+djangorestframework = "^3.11.1"
+djangorestframework-camel-case = "^1.2.0"
 
 [tool.poetry.dev-dependencies]
 black = "^20.8b1"
