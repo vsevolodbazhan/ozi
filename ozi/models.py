@@ -25,6 +25,10 @@ class Client(models.Model):
     chat = models.CharField(max_length=50)
     subscriptions = models.ManyToManyField(Mailing)
 
+    def is_subscribed(self, mailing):
+        mailings = self.subscriptions.all()
+        return mailings.filter(id=mailing.id).exists()
+
     def __str__(self):
         return f"{self.bot}, {self.chat}"
 
