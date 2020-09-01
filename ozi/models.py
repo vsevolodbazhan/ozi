@@ -12,7 +12,10 @@ class Mailing(models.Model):
         return self.name
 
     class Meta:
-        unique_together = ("user", "name",)
+        unique_together = (
+            "user",
+            "name",
+        )
         verbose_name = "mailing"
         verbose_name_plural = "mailing"
 
@@ -26,6 +29,9 @@ class Client(models.Model):
         return f"{self.bot}, {self.chat}"
 
     class Meta:
-        unique_together = ("bot", "chat",)
+        unique_together = (
+            "bot",
+            "chat",
+        )
         verbose_name = "client"
         verbose_name_plural = "clients"

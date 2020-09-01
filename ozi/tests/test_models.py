@@ -40,7 +40,7 @@ class TestClient(TestCase):
     def test_string_representation(self):
         client = Client.objects.create(bot=fake.pystr(), chat=fake.pystr())
 
-        self.assertEqual(str(client), f'{client.bot}, {client.chat}')
+        self.assertEqual(str(client), f"{client.bot}, {client.chat}")
 
     def test_verbose_name(self):
         verbose_name = Client._meta.verbose_name

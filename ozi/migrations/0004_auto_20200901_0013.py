@@ -6,17 +6,17 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('ozi', '0003_client'),
+        ("ozi", "0003_client"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='client',
-            name='subscriptions',
-            field=models.ManyToManyField(to='ozi.Mailing'),
+            model_name="client",
+            name="subscriptions",
+            field=models.ManyToManyField(to="ozi.Mailing"),
         ),
         migrations.AlterUniqueTogether(
-            name='client',
-            unique_together={('bot', 'chat')},
+            name="client",
+            unique_together={("bot", "chat")},
         ),
     ]

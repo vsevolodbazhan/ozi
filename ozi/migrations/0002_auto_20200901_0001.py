@@ -8,16 +8,16 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('ozi', '0001_initial'),
+        ("ozi", "0001_initial"),
     ]
 
     operations = [
         migrations.RenameModel(
-            old_name='Client',
-            new_name='Mailing',
+            old_name="Client",
+            new_name="Mailing",
         ),
         migrations.AlterModelOptions(
-            name='mailing',
-            options={'verbose_name': 'mailing', 'verbose_name_plural': 'mailing'},
+            name="mailing",
+            options={"verbose_name": "mailing", "verbose_name_plural": "mailing"},
         ),
     ]
