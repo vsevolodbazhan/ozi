@@ -1,7 +1,7 @@
 from django.test import TestCase
 from faker import Faker
 
-from .models import User
+from .models import User, Token
 
 fake = Faker()
 
@@ -47,6 +47,11 @@ class TestModels(TestCase):
             User.objects.create_superuser(
                 email=self.email, password=self.password, is_superuser=False
             )
+
+    def test_token_is_created_with_user(self):
+        user = User.objects.create_user(email=self.email, password=self.password)
+
+        self.assertTrue(Token.objects.filter(user=user).exists())
 
     def test_string_representation(self):
         user = User.objects.create_user(email=self.email, password=self.password)
