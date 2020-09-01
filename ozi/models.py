@@ -12,6 +12,7 @@ class Mailing(models.Model):
         return self.name
 
     class Meta:
+        unique_together = ("user", "name",)
         verbose_name = "mailing"
         verbose_name_plural = "mailing"
 

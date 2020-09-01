@@ -28,6 +28,13 @@ class TestMailing(TestCase):
 
         self.assertEqual(verbose_name_plural, "mailing")
 
+    def test_unique_contraints(self):
+        name = fake.pystr()
+
+        with self.assertRaises(IntegrityError):
+            for _ in range(2):
+                Mailing.objects.create(user=self.user, name=name)
+
 
 class TestClient(TestCase):
     def test_string_representation(self):
