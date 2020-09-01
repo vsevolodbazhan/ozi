@@ -4,7 +4,7 @@ from django.db import models
 User = get_user_model()
 
 
-class Client(models.Model):
+class Mailing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
 
@@ -12,5 +12,5 @@ class Client(models.Model):
         return self.name
 
     class Meta:
-        verbose_name = "client"
-        verbose_name_plural = "clients"
+        verbose_name = "mailing"
+        verbose_name_plural = "mailing"
