@@ -2,24 +2,9 @@ import pytest
 from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
 
-from ..models import Client, Mailing
+from ozi.models import Client, Mailing
 
 User = get_user_model()
-
-
-@pytest.fixture
-def email(faker):
-    return faker.email()
-
-
-@pytest.fixture
-def password(faker):
-    return faker.password()
-
-
-@pytest.fixture
-def user(db):
-    return User.objects.create(email=email, password=password)
 
 
 @pytest.mark.django_db

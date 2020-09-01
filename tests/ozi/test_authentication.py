@@ -2,32 +2,9 @@ import pytest
 from django.contrib.auth import get_user_model
 from rest_framework.exceptions import PermissionDenied
 
-from accounts.models import Token
-
-from ..authentication import ConfigAuthentication
-from ..utilities import build_config
+from ozi.authentication import ConfigAuthentication
 
 User = get_user_model()
-
-
-@pytest.fixture
-def user(db, faker):
-    return User.objects.create(email=faker.email(), password=faker.password())
-
-
-@pytest.fixture
-def token(db, user):
-    return Token.objects.get(user=user)
-
-
-@pytest.fixture
-def config(token):
-    return build_config({"token": str(token)})
-
-
-@pytest.fixture
-def empty_config():
-    return build_config({})
 
 
 @pytest.fixture

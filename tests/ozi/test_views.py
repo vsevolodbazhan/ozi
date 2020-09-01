@@ -1,30 +1,11 @@
 import pytest
-
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 
-from accounts.models import Token
-
-from ..models import Client, Mailing
-from ..utilities import build_config
+from ozi.models import Client, Mailing
 
 User = get_user_model()
-
-
-@pytest.fixture
-def user(db, faker):
-    return User.objects.create(email=faker.email(), password=faker.password())
-
-
-@pytest.fixture
-def token(db, user):
-    return Token.objects.get(user=user)
-
-
-@pytest.fixture
-def config(token):
-    return build_config({"token": str(token)})
 
 
 @pytest.fixture

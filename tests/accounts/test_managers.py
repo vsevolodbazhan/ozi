@@ -1,16 +1,6 @@
 import pytest
 
-from .models import User, Token
-
-
-@pytest.fixture
-def email(faker):
-    return faker.email()
-
-
-@pytest.fixture
-def password(faker):
-    return faker.password()
+from accounts.models import Token, User
 
 
 @pytest.mark.django_db
