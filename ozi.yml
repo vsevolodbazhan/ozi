@@ -16,6 +16,22 @@ info:
 
 components:
   schemas:
+    Client:
+      type: object
+      properties:
+        config:
+          $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
+        botId:
+          $ref: "https://api.tomoru.ru/openapi#/components/schemas/botId"
+        chatId:
+          $ref: "https://api.tomoru.ru/openapi#/components/schemas/chatId"
+      required:
+        - config
+        - botId
+        - chatId
+    MailingID:
+      type: integer
+      description: Идентификатор рассылки
     Detail:
       type: object
       properties:
@@ -90,18 +106,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                config:
-                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
-                botId:
-                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/botId"
-                chatId:
-                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/chatId"
-              required:
-                - config
-                - botId
-                - chatId
+              $ref: "#/components/schemas/Client"
       responses:
         200:
           description: Рассылки
@@ -119,5 +124,67 @@ paths:
           description: Нет подписок
         403:
           $ref: "#/components/responses/TokenError"
+        500:
+          $ref: "#/components/responses/UnknownError"
+
+  /subscribe:
+    post:
+      operationId: subscribeClient
+      summary: Подписать клиента на рассылку
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/Client"
+                - $ref: "#/components/schemas/MailingID"
+      responses:
+        204:
+          description: Клиент успешно подписан
+        403:
+          $ref: "#/components/responses/TokenError"
+        404:
+          description: Рассылка не найдена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Detail"
+        409:
+          description: Клиент уже подписан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Detail"
+        500:
+          $ref: "#/components/responses/UnknownError"
+
+  /unsubscribe:
+    post:
+      operationId: unsubscribeClient
+      summary: Отписать клиента от рассылки
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/Client"
+                - $ref: "#/components/schemas/MailingID"
+      responses:
+        204:
+          description: Клиент успешно отписан
+        403:
+          $ref: "#/components/responses/TokenError"
+        404:
+          description: Рассылка не найдена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Detail"
+        409:
+          description: Клиент не подписан
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Detail"
         500:
           $ref: "#/components/responses/UnknownError"

@@ -4,6 +4,7 @@ from rest_framework.response import Response
 
 from .models import Client, Mailing
 from .utilities import stringify
+from . import exceptions
 
 
 def require_client(request):
@@ -13,6 +14,17 @@ def require_client(request):
     client, _ = Client.objects.get_or_create(bot=bot, chat=chat)
 
     return client
+
+
+def require_mailing(request):
+    mailing_id = request.data["mailing_id"]
+
+    try:
+        mailing = Mailing.objects.get(id=mailing_id)
+    except Mailing.DoesNotExist:
+        raise exceptions.NotFound("Could not find a mailing with the provided ID.")
+
+    return mailing
 
 
 @api_view(["POST"])
@@ -36,3 +48,27 @@ def list_client_subscriptions(request):
 
     data = {"subscriptions": stringify(subscriptions)}
     return Response(data=data, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def subscribe_client(request):
+    client = require_client(request)
+    mailing = require_mailing(request)
+
+    if client.is_subscribed(mailing):
+        raise exceptions.Conflict("Client is already subscribed.")
+
+    client.subscriptions.add(mailing)
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["POST"])
+def unsubscribe_client(request):
+    client = require_client(request)
+    mailing = require_mailing(request)
+
+    if not client.is_subscribed(mailing):
+        raise exceptions.Conflict("Client is not subscribed.")
+
+    client.subscriptions.remove(mailing)
+    return Response(status=status.HTTP_204_NO_CONTENT)
