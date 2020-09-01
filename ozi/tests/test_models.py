@@ -1,8 +1,9 @@
 from django.contrib.auth import get_user_model
+from django.db.utils import IntegrityError
 from django.test import TestCase
 from faker import Faker
 
-from ..models import Mailing
+from ..models import Client, Mailing
 
 User = get_user_model()
 fake = Faker()
@@ -26,3 +27,27 @@ class TestMailing(TestCase):
         verbose_name_plural = Mailing._meta.verbose_name_plural
 
         self.assertEqual(verbose_name_plural, "mailing")
+
+
+class TestClient(TestCase):
+    def test_string_representation(self):
+        client = Client.objects.create(bot=fake.pystr(), chat=fake.pystr())
+
+        self.assertEqual(str(client), f'{client.bot}, {client.chat}')
+
+    def test_verbose_name(self):
+        verbose_name = Client._meta.verbose_name
+
+        self.assertEqual(verbose_name, "client")
+
+    def test_verbose_name_plural(self):
+        verbose_name_plural = Client._meta.verbose_name_plural
+
+        self.assertEqual(verbose_name_plural, "clients")
+
+    def test_unique_contraints(self):
+        bot, chat = fake.pystr(), fake.pystr()
+
+        with self.assertRaises(IntegrityError):
+            for _ in range(2):
+                Client.objects.create(bot=bot, chat=chat)

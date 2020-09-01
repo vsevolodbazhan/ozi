@@ -14,3 +14,17 @@ class Mailing(models.Model):
     class Meta:
         verbose_name = "mailing"
         verbose_name_plural = "mailing"
+
+
+class Client(models.Model):
+    bot = models.CharField(max_length=50)
+    chat = models.CharField(max_length=50)
+    subscriptions = models.ManyToManyField(Mailing)
+
+    def __str__(self):
+        return f"{self.bot}, {self.chat}"
+
+    class Meta:
+        unique_together = ("bot", "chat",)
+        verbose_name = "client"
+        verbose_name_plural = "clients"
