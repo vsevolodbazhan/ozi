@@ -13,9 +13,9 @@ class TestMailing(TestCase):
         self.user = User.objects.create(email=fake.email(), password=fake.password())
 
     def test_string_representation(self):
-        client = Mailing.objects.create(user=self.user, name=fake.pystr())
+        mailing = Mailing.objects.create(user=self.user, name=fake.pystr())
 
-        self.assertEqual(str(client), client.name)
+        self.assertEqual(str(mailing), mailing.name)
 
     def test_verbose_name(self):
         verbose_name = Mailing._meta.verbose_name
