@@ -7,11 +7,11 @@ class ConfigAuthentication(TokenAuthentication):
         config = request.data.get("config")
         if config is None:
             detail = "No config provided."
-            raise exceptions.AuthenticationFailed(detail)
+            raise exceptions.PermissionDenied(detail)
 
         token = config.get("token")
         if token is None:
             detail = "No token provided."
-            raise exceptions.AuthenticationFailed(detail)
+            raise exceptions.PermissionDenied(detail)
 
         return self.authenticate_credentials(token)

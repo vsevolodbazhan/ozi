@@ -39,5 +39,5 @@ class TestMailing(APITestCase):
         url = reverse("list-mailings")
         response = self.client.post(url)
 
-        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertCountEqual(response.data, ["detail"])

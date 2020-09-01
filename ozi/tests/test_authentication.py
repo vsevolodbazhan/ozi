@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.test import TestCase
 from faker import Faker
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import PermissionDenied
 
 from accounts.models import Token
 
@@ -35,12 +35,12 @@ class TestConfigAuthentication(TestCase):
         data = {}
         request = self.DummyRequest(data=data)
 
-        with self.assertRaises(AuthenticationFailed):
+        with self.assertRaises(PermissionDenied):
             self.authentication.authenticate(request)
 
     def test_token_is_required(self):
         data = build_config({})
         request = self.DummyRequest(data=data)
 
-        with self.assertRaises(AuthenticationFailed):
+        with self.assertRaises(PermissionDenied):
             self.authentication.authenticate(request)

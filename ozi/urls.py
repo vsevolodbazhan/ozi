@@ -1,8 +1,13 @@
 from django.urls import path
 
-from .views import echo, list_mailings
+from . import views
 
 urlpatterns = [
-    path("echo", echo),
-    path("mailings", list_mailings, name="list-mailings"),
+    path("echo", views.echo),
+    path("mailings", views.list_mailings, name="list-mailings"),
+    path(
+        "subscriptions",
+        views.list_client_subscriptions,
+        name="list-subscriptions",
+    ),
 ]
