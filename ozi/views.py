@@ -16,11 +16,6 @@ def require_client(request):
 
 
 @api_view(["POST"])
-def echo(request):
-    return Response(data=request.data, status=status.HTTP_200_OK)
-
-
-@api_view(["POST"])
 def list_mailings(request):
     mailings = Mailing.objects.filter(user=request.user)
 
