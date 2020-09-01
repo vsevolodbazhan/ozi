@@ -85,6 +85,7 @@ REST_FRAMEWORK = {
     "DEFAULT_PARSER_CLASSES": (
         "djangorestframework_camel_case.parser.CamelCaseJSONParser",
     ),
+    "DEFAULT_AUTHENTICATION_CLASSES": ("ozi.authentication.ConfigAuthentication",),
 }
 
 # Database
