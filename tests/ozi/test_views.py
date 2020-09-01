@@ -60,6 +60,16 @@ def test_list_subscriptions(client, config, user, _client, faker):
     assert set(response.data.keys()) == set(["subscriptions"])
 
 
+def test_list_subscriptions_creates_client(client, config, faker):
+    url = reverse("list-subscriptions")
+    data = {"bot_id": faker.pystr(), "chat_id": faker.pystr(), **config}
+
+    response = client.post(url, data, content_type="application/json")
+
+    assert response.status_code == status.HTTP_204_NO_CONTENT
+    assert Client.objects.count() == 1
+
+
 def test_list_subscriptions_requires_authentication(client):
     url = reverse("list-subscriptions")
     response = client.post(url, content_type="application/json")
