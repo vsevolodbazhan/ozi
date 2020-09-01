@@ -1,69 +1,78 @@
-from django.test import TestCase
-from faker import Faker
+import pytest
 
 from .models import User, Token
 
-fake = Faker()
+
+@pytest.fixture
+def email(faker):
+    return faker.email()
 
 
-class TestModels(TestCase):
-    def setUp(self):
-        self.email = fake.email()
-        self.password = fake.password()
+@pytest.fixture
+def password(faker):
+    return faker.password()
 
-    def test_user_creation(self):
-        user = User.objects.create_user(email=self.email, password=self.password)
 
-        self.assertEqual(user.email, self.email)
-        self.assertTrue(user.check_password(self.password))
-        self.assertTrue(user.is_active)
-        self.assertFalse(user.is_staff)
-        self.assertFalse(user.is_superuser)
+@pytest.mark.django_db
+def test_user_creation(email, password):
+    user = User.objects.create_user(email=email, password=password)
 
-        with self.assertRaises(AttributeError):
-            user.username
+    assert user.email == email
+    assert user.check_password(password)
+    assert user.is_active
+    assert user.is_staff is False
+    assert user.is_superuser is False
 
-        with self.assertRaises(ValueError):
-            User.objects.create_user(email="", password=self.password)
+    with pytest.raises(AttributeError):
+        user.username
 
-    def test_superuser_creation(self):
-        user = User.objects.create_superuser(email=self.email, password=self.password)
+    with pytest.raises(ValueError):
+        User.objects.create_user(email="", password=password)
 
-        self.assertEqual(user.email, self.email)
-        self.assertTrue(user.check_password(self.password))
-        self.assertTrue(user.is_active)
-        self.assertTrue(user.is_staff)
-        self.assertTrue(user.is_superuser)
 
-        with self.assertRaises(AttributeError):
-            user.username
+@pytest.mark.django_db
+def test_superuser_creation(email, password):
+    user = User.objects.create_superuser(email=email, password=password)
 
-        with self.assertRaises(ValueError):
-            User.objects.create_superuser(
-                email=self.email, password=self.password, is_staff=False
-            )
+    assert user.email == email
+    assert user.check_password(password)
+    assert user.is_active
+    assert user.is_staff
+    assert user.is_superuser
 
-        with self.assertRaises(ValueError):
-            User.objects.create_superuser(
-                email=self.email, password=self.password, is_superuser=False
-            )
+    with pytest.raises(AttributeError):
+        user.username
 
-    def test_token_is_created_with_user(self):
-        user = User.objects.create_user(email=self.email, password=self.password)
+    with pytest.raises(ValueError):
+        User.objects.create_superuser(email=email, password=password, is_staff=False)
 
-        self.assertTrue(Token.objects.filter(user=user).exists())
+    with pytest.raises(ValueError):
+        User.objects.create_superuser(
+            email=email, password=password, is_superuser=False
+        )
 
-    def test_string_representation(self):
-        user = User.objects.create_user(email=self.email, password=self.password)
 
-        self.assertEqual(str(user), user.email)
+@pytest.mark.django_db
+def test_token_is_created_with_user(email, password):
+    user = User.objects.create_user(email=email, password=password)
 
-    def test_verbose_name(self):
-        verbose_name = User._meta.verbose_name
+    assert Token.objects.filter(user=user).exists()
 
-        self.assertEqual(verbose_name, "User")
 
-    def test_verbose_name_plural(self):
-        verbose_name_plural = User._meta.verbose_name_plural
+@pytest.mark.django_db
+def test_string_representation(email, password):
+    user = User.objects.create_user(email=email, password=password)
 
-        self.assertEqual(verbose_name_plural, "Users")
+    assert str(user) == user.email
+
+
+def test_verbose_name():
+    verbose_name = User._meta.verbose_name
+
+    assert verbose_name == "User"
+
+
+def test_verbose_name_plural():
+    verbose_name_plural = User._meta.verbose_name_plural
+
+    assert verbose_name_plural == "Users"

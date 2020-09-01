@@ -1,60 +1,72 @@
+import pytest
 from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
-from django.test import TestCase
-from faker import Faker
 
 from ..models import Client, Mailing
 
 User = get_user_model()
-fake = Faker()
 
 
-class TestMailing(TestCase):
-    def setUp(self):
-        self.user = User.objects.create(email=fake.email(), password=fake.password())
+@pytest.fixture
+def email(faker):
+    return faker.email()
 
-    def test_string_representation(self):
-        mailing = Mailing.objects.create(user=self.user, name=fake.pystr())
 
-        self.assertEqual(str(mailing), mailing.name)
+@pytest.fixture
+def password(faker):
+    return faker.password()
+
+
+@pytest.fixture
+def user(db):
+    return User.objects.create(email=email, password=password)
+
+
+@pytest.mark.django_db
+class TestMailing:
+    def test_string_representation(self, user, faker):
+        mailing = Mailing.objects.create(user=user, name=faker.pystr())
+
+        assert str(mailing) == mailing.name
 
     def test_verbose_name(self):
         verbose_name = Mailing._meta.verbose_name
 
-        self.assertEqual(verbose_name, "Mailing")
+        assert verbose_name == "Mailing"
 
     def test_verbose_name_plural(self):
         verbose_name_plural = Mailing._meta.verbose_name_plural
 
-        self.assertEqual(verbose_name_plural, "Mailings")
+        assert verbose_name_plural == "Mailings"
 
-    def test_unique_contraints(self):
-        name = fake.pystr()
+    def test_unique_contraints(self, user, faker):
+        name = faker.pystr()
 
-        with self.assertRaises(IntegrityError):
+        with pytest.raises(IntegrityError):
             for _ in range(2):
-                Mailing.objects.create(user=self.user, name=name)
+                Mailing.objects.create(user=user, name=name)
 
 
-class TestClient(TestCase):
-    def test_string_representation(self):
-        client = Client.objects.create(bot=fake.pystr(), chat=fake.pystr())
+@pytest.mark.django_db
+class TestClient:
+    def test_string_representation(self, faker):
+        client = Client.objects.create(bot=faker.pystr(), chat=faker.pystr())
 
-        self.assertEqual(str(client), f"{client.bot}, {client.chat}")
+        assert str(client) == f"{client.bot}, {client.chat}"
 
     def test_verbose_name(self):
         verbose_name = Client._meta.verbose_name
 
-        self.assertEqual(verbose_name, "Client")
+        assert verbose_name == "Client"
 
     def test_verbose_name_plural(self):
         verbose_name_plural = Client._meta.verbose_name_plural
 
-        self.assertEqual(verbose_name_plural, "Clients")
+        assert verbose_name_plural == "Clients"
 
-    def test_unique_contraints(self):
-        bot, chat = fake.pystr(), fake.pystr()
+    def test_unique_contraints(self, faker):
+        bot, chat = faker.pystr(), faker.pystr()
 
-        with self.assertRaises(IntegrityError):
+        with pytest.raises(IntegrityError):
             for _ in range(2):
                 Client.objects.create(bot=bot, chat=chat)
