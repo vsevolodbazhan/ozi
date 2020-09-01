@@ -1,7 +1,5 @@
 from django.urls import path
 
-from .views import hello
+from .views import echo
 
-urlpatterns = [
-    path("hello", hello),
-]
+urlpatterns = [path("echo", echo)]
