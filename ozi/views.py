@@ -1,9 +1,13 @@
+from datetime import timedelta
+
+from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from . import exceptions
 from .models import Client, Mailing
+from .tasks import send_event
 from .utilities import stringify
 
 
@@ -85,3 +89,15 @@ def find_mailing(request):
 
     data = {"mailing_id": most_similar_mailing.id}
     return Response(data=data, status=status.HTTP_200_OK)
+
+
+@api_view(["POST"])
+def plan_update(request):
+    mailing = require_mailing(request)
+    hours = request.data.get("hours", 0)
+    minutes = request.data.get("minutes", 0)
+
+    timestamp = timezone.now() + timedelta(hours=hours, minutes=minutes)
+
+    send_event(user_id=request.user.id, mailing_id=mailing.id, schedule=timestamp)
+    return Response(status=status.HTTP_202_ACCEPTED)

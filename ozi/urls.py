@@ -12,4 +12,5 @@ urlpatterns = [
     path("subscribe", views.subscribe_client, name="subscribe-client"),
     path("unsubscribe", views.unsubscribe_client, name="unsubscribe-client"),
     path("find-mailing", views.find_mailing, name="find-mailing"),
+    path("plan-update", views.plan_update, name="plan-update"),
 ]
