@@ -1,8 +1,13 @@
 from background_task.models import Task
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from comparator import distance_is_acceptable, levenshtein_distance, normalize
+
+from .tasks import send_event
+from .utilities import retrieve_task_parameters
 
 User = get_user_model()
 
@@ -76,3 +81,19 @@ class Update(models.Model):
     class Meta:
         verbose_name = "Update"
         verbose_name_plural = "Updates"
+
+
+@receiver(post_save, sender=Task)
+def create_update(sender, instance=None, created=False, **kwargs):
+    if not created:
+        return
+
+    task = instance
+    if not task.task_name == send_event.name:
+        return
+
+    parameters = retrieve_task_parameters(task)
+    user = User.objects.get(id=parameters["user_id"])
+    mailing = Mailing.objects.get(id=parameters["mailing_id"])
+
+    Update.objects.create(task=task, user=user, mailing=mailing)
