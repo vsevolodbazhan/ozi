@@ -59,10 +59,19 @@ class Client(models.Model):
 
 
 class Update(models.Model):
+    task = models.ForeignKey(Task, on_delete=models.CASCADE, editable=False)
+
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, blank=True, null=True)
-    task = models.ForeignKey(Task, on_delete=models.CASCADE)
+
+    time = models.TimeField()
+    date = models.DateField()
+
+    def save(self, *args, **kwargs):
+        self.time = self.task.run_at.time()
+        self.date = self.task.run_at.date()
+        super(Update, self).save(*args, **kwargs)
 
     class Meta:
         verbose_name = "Update"
