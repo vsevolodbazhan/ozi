@@ -2,9 +2,9 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
+from . import exceptions
 from .models import Client, Mailing
 from .utilities import stringify
-from . import exceptions
 
 
 def require_client(request):
@@ -72,3 +72,16 @@ def unsubscribe_client(request):
 
     client.subscriptions.remove(mailing)
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(["POST"])
+def find_mailing(request):
+    name = request.data["name"]
+    mailings = Mailing.objects.filter(user=request.user)
+
+    most_similar_mailing = Mailing.find_by_fuzzy_name(name, mailings)
+    if most_similar_mailing is None:
+        raise exceptions.NotFound("Couldn't find a relevant subscription.")
+
+    data = {"mailind_id": most_similar_mailing.id}
+    return Response(data=data, status=status.HTTP_200_OK)

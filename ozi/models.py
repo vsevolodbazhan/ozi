@@ -1,12 +1,28 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 
+from comparator import distance_is_acceptable, levenshtein_distance, normalize
+
 User = get_user_model()
 
 
 class Mailing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
+
+    @staticmethod
+    def find_by_fuzzy_name(name, mailings):
+        min_distance = len(name)
+        most_similar_mailing = None
+        normalized_name = normalize(name)
+
+        for mailing in mailings:
+            existing_name = normalize(mailing.name)
+            distance = levenshtein_distance(normalized_name, existing_name)
+            if distance_is_acceptable(distance) and distance < min_distance:
+                min_distance, most_similar_mailing = distance, mailing
+
+        return most_similar_mailing
 
     def __str__(self):
         return self.name
