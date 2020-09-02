@@ -83,5 +83,5 @@ def find_mailing(request):
     if most_similar_mailing is None:
         raise exceptions.NotFound("Couldn't find a relevant subscription.")
 
-    data = {"mailind_id": most_similar_mailing.id}
+    data = {"mailing_id": most_similar_mailing.id}
     return Response(data=data, status=status.HTTP_200_OK)
