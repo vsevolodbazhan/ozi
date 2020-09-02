@@ -45,6 +45,11 @@ def unsubscribe_client_url():
     return reverse("unsubscribe-client")
 
 
+@pytest.fixture
+def find_mailing_url():
+    return reverse("find-mailing")
+
+
 def test_list_mailings_with_no_mailings(list_mailings_url, client, config):
     response = client.post(list_mailings_url, config, content_type="application/json")
 
@@ -252,3 +257,49 @@ def test_unsubscribe_client_requires_mailing(
 
     assert response.status_code == status.HTTP_404_NOT_FOUND
     assert set(response.data.keys()) == set(["detail"])
+
+
+def test_unsubscribe_client_requires_authentication(
+    unsubscribe_client_url, client, _client, mailing
+):
+    data = {
+        "chat_id": _client.chat,
+        "bot_id": _client.bot,
+        "mailing_id": mailing.id,
+    }
+    response = client.post(
+        unsubscribe_client_url, data, content_type="application/json"
+    )
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+def test_find_mailing_by_exact_name(find_mailing_url, client, config, mailing):
+    data = {"name": mailing.name, **config}
+    response = client.post(find_mailing_url, data, content_type="application/json")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["mailing_id"] == mailing.id
+
+
+def test_find_mailing_by_fuzzy_name(find_mailing_url, client, config, mailing):
+    data = {"name": mailing.name.lower() + "x", **config}
+    response = client.post(find_mailing_url, data, content_type="application/json")
+
+    assert response.status_code == status.HTTP_200_OK
+    assert response.data["mailing_id"] == mailing.id
+
+
+def test_find_mailing_can_fail(find_mailing_url, client, config, mailing, faker):
+    data = {"name": mailing.name.lower() + faker.pystr(), **config}
+    response = client.post(find_mailing_url, data, content_type="application/json")
+
+    assert response.status_code == status.HTTP_404_NOT_FOUND
+    assert set(response.data.keys()) == set(["detail"])
+
+
+def test_find_mailing_requires_authentication(find_mailing_url, client, faker):
+    data = {"name": faker.pystr()}
+    response = client.post(find_mailing_url, data, content_type="application/json")
+
+    assert response.status_code == status.HTTP_403_FORBIDDEN

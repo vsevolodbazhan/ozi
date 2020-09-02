@@ -31,6 +31,18 @@ class TestMailing:
             for _ in range(2):
                 Mailing.objects.create(user=user, name=name)
 
+    def test_can_be_found_by_fuzzy_name(self, user):
+        for i in range(5):
+            Mailing.objects.create(user=user, name=f"Mailing {i + 1}")
+
+        fuzzy_name = "mailin1"
+        mailings = Mailing.objects.filter(user=user)
+
+        mailing = Mailing.find_by_fuzzy_name(fuzzy_name, mailings)
+
+        assert mailing.id == 1
+        assert mailing.name == "Mailing 1"
+
 
 @pytest.mark.django_db
 class TestClient:
