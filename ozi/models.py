@@ -1,5 +1,3 @@
-import uuid
-
 from background_task.models import Task
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -61,14 +59,10 @@ class Client(models.Model):
 
 
 class Update(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     mailing = models.ForeignKey(Mailing, on_delete=models.CASCADE)
     client = models.ForeignKey(Client, on_delete=models.CASCADE, blank=True, null=True)
     task = models.ForeignKey(Task, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.id
 
     class Meta:
         verbose_name = "Update"
