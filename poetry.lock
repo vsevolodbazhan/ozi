@@ -108,6 +108,29 @@ bcrypt = ["bcrypt"]
 
 [[package]]
 category = "main"
+description = "Database backed asynchronous task queue"
+name = "django-background-tasks"
+optional = false
+python-versions = "*"
+version = "1.2.5"
+
+[package.dependencies]
+django-compat = ">=1.0.13"
+six = "*"
+
+[[package]]
+category = "main"
+description = "For- and backwards compatibility layer for Django 1.4, 1.7, 1.8, 1.9, 1.10, and 1.11"
+name = "django-compat"
+optional = false
+python-versions = "*"
+version = "1.0.15"
+
+[package.dependencies]
+six = ">=1.10.0"
+
+[[package]]
+category = "main"
 description = "Web APIs for Django, made easy."
 name = "djangorestframework"
 optional = false
@@ -350,7 +373,7 @@ python-versions = "*"
 version = "2020.7.14"
 
 [[package]]
-category = "dev"
+category = "main"
 description = "Python 2 and 3 compatibility utilities"
 name = "six"
 optional = false
@@ -398,7 +421,7 @@ python-versions = "*"
 version = "3.7.4.3"
 
 [metadata]
-content-hash = "8a230ec8124a3a134255a06fb6965621dffd7d3bb8eca5dba406046962cc0077"
+content-hash = "9ee37d2bba69b6749a0c11ad39b4fec7c4995a4083fda78adbcda690c65cb4c6"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -469,6 +492,12 @@ coverage = [
 django = [
     {file = "Django-3.1-py3-none-any.whl", hash = "sha256:1a63f5bb6ff4d7c42f62a519edc2adbb37f9b78068a5a862beff858b68e3dc8b"},
     {file = "Django-3.1.tar.gz", hash = "sha256:2d390268a13c655c97e0e2ede9d117007996db692c1bb93eabebd4fb7ea7012b"},
+]
+django-background-tasks = [
+    {file = "django-background-tasks-1.2.5.tar.gz", hash = "sha256:e1b19e8d495a276c9d64c5a1ff8b41132f75d2f58e45be71b78650dad59af9de"},
+]
+django-compat = [
+    {file = "django-compat-1.0.15.tar.gz", hash = "sha256:3ac9a3bedc56b9365d9eb241bc5157d0c193769bf995f9a78dc1bc24e7c2331b"},
 ]
 djangorestframework = [
     {file = "djangorestframework-3.11.1-py3-none-any.whl", hash = "sha256:8b1ac62c581dbc5799b03e535854b92fc4053ecfe74bad3f9c05782063d4196b"},
