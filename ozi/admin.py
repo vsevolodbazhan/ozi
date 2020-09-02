@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Client, Mailing, Update
+from .models import Client, Hook, Mailing, Update
 
 
 class UpdateAdmin(admin.ModelAdmin):
@@ -8,5 +8,6 @@ class UpdateAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Client)
+admin.site.register(Hook)
 admin.site.register(Mailing)
 admin.site.register(Update, UpdateAdmin)

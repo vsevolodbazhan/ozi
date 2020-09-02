@@ -64,6 +64,17 @@ class Client(models.Model):
         verbose_name_plural = "Clients"
 
 
+class Hook(models.Model):
+    target = models.URLField()
+
+    def __str__(self):
+        return self.target
+
+    class Meta:
+        verbose_name = "Hook"
+        verbose_name_plural = "Hooks"
+
+
 class Update(models.Model):
     task = models.ForeignKey(Task, on_delete=models.CASCADE, editable=False)
 
