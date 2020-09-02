@@ -4,7 +4,7 @@ from .models import Client, Mailing, Update
 
 
 class UpdateAdmin(admin.ModelAdmin):
-    readonly_fields = ("user", "mailing", "client", "time", "date")
+    readonly_fields = ("user", "mailing", "client", "time", "date", "repeat")
 
 
 admin.site.register(Client)

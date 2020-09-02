@@ -8,6 +8,7 @@ from comparator import distance_is_acceptable, levenshtein_distance, normalize
 
 from .tasks import send_event
 from .utilities import retrieve_task_parameters
+from .constants import NUMBER_OF_SECONDS_IN_MINUTE
 
 User = get_user_model()
 
@@ -72,10 +73,15 @@ class Update(models.Model):
 
     time = models.TimeField()
     date = models.DateField()
+    repeat = models.CharField(max_length=25, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         self.time = self.task.run_at.time()
         self.date = self.task.run_at.date()
+        if self.task.repeat > 0:
+            self.repeat = (
+                f"Every {self.task.repeat // NUMBER_OF_SECONDS_IN_MINUTE} minute(s)"
+            )
         super(Update, self).save(*args, **kwargs)
 
     class Meta:
