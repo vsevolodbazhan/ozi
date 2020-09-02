@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime, date as _date, time as _time
 
 from django.utils import timezone
 from rest_framework import status
@@ -9,6 +9,7 @@ from . import exceptions
 from .models import Client, Mailing
 from .tasks import send_event
 from .utilities import stringify
+from .constants import NUMBER_OF_SECONDS_IN_MINUTE
 
 
 def require_client(request):
@@ -100,4 +101,26 @@ def plan_update(request):
     timestamp = timezone.now() + timedelta(hours=hours, minutes=minutes)
 
     send_event(user_id=request.user.id, mailing_id=mailing.id, schedule=timestamp)
+    return Response(status=status.HTTP_202_ACCEPTED)
+
+
+@api_view(["POST"])
+def schedule_update(request):
+    mailing = require_mailing(request)
+    time = request.data.get("time")
+    date = request.data.get("date")
+    repeat = request.data.get("repeat", 0) * NUMBER_OF_SECONDS_IN_MINUTE
+
+    time, date = (
+        timezone.now().time() if time is None else _time.fromisoformat(time),
+        timezone.now().date() if date is None else _date.fromisoformat(date),
+    )
+    timestamp = timezone.make_aware(datetime.combine(date=date, time=time))
+
+    send_event(
+        user_id=request.user.id,
+        mailing_id=mailing.id,
+        schedule=timestamp,
+        repeat=repeat,
+    )
     return Response(status=status.HTTP_202_ACCEPTED)
