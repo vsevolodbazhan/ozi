@@ -6,7 +6,6 @@ from django.dispatch import receiver
 
 from comparator import distance_is_acceptable, levenshtein_distance, normalize
 
-from .tasks import send_event
 from .utilities import retrieve_task_parameters
 from .constants import NUMBER_OF_SECONDS_IN_MINUTE
 
@@ -114,9 +113,6 @@ def create_update(sender, instance=None, created=False, **kwargs):
         return
 
     task = instance
-    if not task.task_name == send_event.name:
-        return
-
     parameters = retrieve_task_parameters(task)
     user = User.objects.get(id=parameters["user_id"])
     mailing = Mailing.objects.get(id=parameters["mailing_id"])
