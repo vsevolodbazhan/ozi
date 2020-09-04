@@ -43,10 +43,18 @@ class Mailing(models.Model):
         verbose_name_plural = "Mailings"
 
 
+class ClientManager(models.Manager):
+    def get_subscribed(self, mailing):
+        mailings = [mailing]
+        return self.filter(subscriptions__in=mailings).distinct()
+
+
 class Client(models.Model):
     bot = models.CharField(max_length=50)
     chat = models.CharField(max_length=50)
     subscriptions = models.ManyToManyField(Mailing)
+
+    objects = ClientManager()
 
     def is_subscribed(self, mailing):
         mailings = self.subscriptions.all()

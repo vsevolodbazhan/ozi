@@ -81,3 +81,30 @@ class TestClient:
         client = Client.objects.create(bot=faker.pystr(), chat=faker.pystr())
 
         assert client.is_subscribed(mailing) is False
+
+    def test_can_get_subscribed(self, user, faker):
+        client_1, client_2, _ = (
+            self._create_client(faker),
+            self._create_client(faker),
+            self._create_client(faker),
+        )
+        mailing_1, mailing_2 = (
+            self._create_mailing(user, faker),
+            self._create_mailing(user, faker),
+        )
+
+        client_1.subscriptions.add(mailing_1)
+        client_1.subscriptions.add(mailing_2)
+        client_2.subscriptions.add(mailing_1)
+
+        clients = Client.objects.get_subscribed(mailing_1)
+
+        assert clients.count() == 2
+        assert clients.first() == client_1
+        assert clients.last() == client_2
+
+    def _create_client(self, faker):
+        return Client.objects.create(bot=faker.pystr(), chat=faker.pystr())
+
+    def _create_mailing(self, user, faker):
+        return Mailing.objects.create(user=user, name=faker.pystr())
