@@ -102,6 +102,13 @@ class Update(models.Model):
             )
         super(Update, self).save(*args, **kwargs)
 
+    def __str__(self):
+        parameters = f"{self.time}, {self.date}"
+        if self.client is not None:
+            parameters = f"{parameters}, {self.client}"
+
+        return f"{self.mailing} ({parameters})"
+
     class Meta:
         verbose_name = "Update"
         verbose_name_plural = "Updates"
