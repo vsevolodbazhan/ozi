@@ -7,7 +7,7 @@ from django.db.utils import IntegrityError
 from django.utils import timezone
 
 from ozi.constants import NUMBER_OF_SECONDS_IN_MINUTE
-from ozi.models import Client, Mailing, Task, Update
+from ozi.models import Client, Hook, Mailing, Task, Update
 
 User = get_user_model()
 
@@ -188,3 +188,21 @@ class TestUpdate:
     def test_update_repeat_string_is_set(self, task, repeat):
         update = Update.objects.first()
         update.repeat = f"Every {repeat // NUMBER_OF_SECONDS_IN_MINUTE} minute(s)"
+
+
+@pytest.mark.django_db
+class TestHook:
+    def test_string_representation(self, faker):
+        hook = Hook.objects.create(target=faker.url())
+
+        assert str(hook) == hook.target
+
+    def test_verbose_name(self):
+        verbose_name = Hook._meta.verbose_name
+
+        assert verbose_name == "Hook"
+
+    def test_verbose_name_plural(self):
+        verbose_name_plural = Hook._meta.verbose_name_plural
+
+        assert verbose_name_plural == "Hooks"
