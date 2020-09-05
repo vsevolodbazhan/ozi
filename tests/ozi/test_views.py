@@ -355,3 +355,62 @@ class TestPlanUpdate:
 
         assert response.status_code == status.HTTP_202_ACCEPTED
         assert Update.objects.count() == 1
+
+
+class TestScheduleUpdate:
+    @pytest.fixture
+    def timestamp(self, faker):
+        return faker.date_time()
+
+    @pytest.fixture
+    def repeat(self, faker):
+        return faker.pyint()
+
+    @pytest.fixture
+    def data(self, _client, mailing, timestamp, repeat, config):
+        return {
+            "mailingId": mailing.id,
+            "botId": _client.bot,
+            "chatId": _client.chat,
+            "time": timestamp.time(),
+            "date": timestamp.date(),
+            "repeat": repeat,
+            **config,
+        }
+
+    @pytest.fixture
+    def url(self):
+        return reverse("schedule-update")
+
+    def test_schedule_update_requires_authentication(self, client, url, data):
+        data.pop("config")
+        response = client.post(url, data, content_type="application/json")
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_schedule_update_creates_update_without_time(self, client, url, data):
+        data.pop("time")
+        response = client.post(url, data, content_type="application/json")
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Update.objects.count() == 1
+
+    def test_schedule_update_creates_update_without_date(self, client, url, data):
+        data.pop("date")
+        response = client.post(url, data, content_type="application/json")
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Update.objects.count() == 1
+
+    def test_schedule_update_creates_update_without_repeat(self, client, url, data):
+        data.pop("repeat")
+        response = client.post(url, data, content_type="application/json")
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Update.objects.count() == 1
+
+    def test_schedule_update_creates_update(self, client, url, data):
+        response = client.post(url, data, content_type="application/json")
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Update.objects.count() == 1
