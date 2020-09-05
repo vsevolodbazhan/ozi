@@ -1,10 +1,23 @@
+import json
+import secrets
+
 import pytest
 from django.contrib.auth import get_user_model
 from django.db.utils import IntegrityError
+from django.utils import timezone
 
-from ozi.models import Client, Mailing
+from ozi.constants import NUMBER_OF_SECONDS_IN_MINUTE
+from ozi.models import Client, Mailing, Task, Update
 
 User = get_user_model()
+
+
+def create_client(faker):
+    return Client.objects.create(bot=faker.pystr(), chat=faker.pystr())
+
+
+def create_mailing(user, faker):
+    return Mailing.objects.create(user=user, name=faker.pystr())
 
 
 @pytest.mark.django_db
@@ -84,13 +97,13 @@ class TestClient:
 
     def test_can_get_subscribed(self, user, faker):
         client_1, client_2, _ = (
-            self._create_client(faker),
-            self._create_client(faker),
-            self._create_client(faker),
+            create_client(faker),
+            create_client(faker),
+            create_client(faker),
         )
         mailing_1, mailing_2 = (
-            self._create_mailing(user, faker),
-            self._create_mailing(user, faker),
+            create_mailing(user, faker),
+            create_mailing(user, faker),
         )
 
         client_1.subscriptions.add(mailing_1)
@@ -103,8 +116,75 @@ class TestClient:
         assert clients.first() == client_1
         assert clients.last() == client_2
 
-    def _create_client(self, faker):
-        return Client.objects.create(bot=faker.pystr(), chat=faker.pystr())
 
-    def _create_mailing(self, user, faker):
-        return Mailing.objects.create(user=user, name=faker.pystr())
+@pytest.mark.django_db
+class TestUpdate:
+    @pytest.fixture
+    def timestamp(self):
+        return timezone.now()
+
+    @pytest.fixture
+    def mailing(self, user, faker):
+        return create_mailing(user, faker)
+
+    @pytest.fixture
+    def client(self, faker):
+        return create_client(faker)
+
+    @pytest.fixture
+    def repeat(self, faker):
+        return faker.pyint()
+
+    @pytest.fixture
+    def task(self, faker, timestamp, user, mailing, client, repeat):
+        return Task.objects.create(
+            task_name=faker.pystr(),
+            task_params=json.dumps(
+                [
+                    [],
+                    {
+                        "user_id": user.id,
+                        "mailing_id": mailing.id,
+                        "client_id": client.id,
+                    },
+                ]
+            ),
+            task_hash=secrets.token_hex(16),
+            run_at=timestamp,
+            repeat=repeat,
+        )
+
+    def test_string_representation(self, task, user, mailing, client, timestamp, faker):
+        update = Update.objects.create(
+            task=task, user=user, mailing=mailing, client=client
+        )
+
+        assert (
+            str(update)
+            == f"{mailing.name} ({timestamp.time()}, {timestamp.date()}, {client})"
+        )
+
+    def test_verbose_name(self):
+        verbose_name = Update._meta.verbose_name
+
+        assert verbose_name == "Update"
+
+    def test_verbose_name_plural(self):
+        verbose_name_plural = Update._meta.verbose_name_plural
+
+        assert verbose_name_plural == "Updates"
+
+    def test_update_creates_with_task(self, task):
+        assert Update.objects.count() == 1
+        assert Update.objects.first().task == task
+
+    def test_task_delets_with_update(self, task):
+        update = Update.objects.first()
+        update.delete()
+
+        assert Update.objects.count() == 0
+        assert Task.objects.count() == 0
+
+    def test_update_repeat_string_is_set(self, task, repeat):
+        update = Update.objects.first()
+        update.repeat = f"Every {repeat // NUMBER_OF_SECONDS_IN_MINUTE} minute(s)"
