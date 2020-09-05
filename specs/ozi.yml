@@ -188,3 +188,110 @@ paths:
                 $ref: "#/components/schemas/Detail"
         500:
           $ref: "#/components/responses/UnknownError"
+
+  /find-mailing:
+    post:
+      operationId: findMailing
+      summary: Найти рассылку
+      description: Поиск рассылки по неточному названию; названию, которое может содержать незначительные опечатки.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Название
+              required:
+                - name
+      responses:
+        200:
+          description: Рассылка найдена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MailingID"
+        403:
+          $ref: "#/components/responses/TokenError"
+        404:
+          description: Рассылка не найдена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Detail"
+        500:
+          $ref: "#/components/responses/UnknownError"
+
+  /plan-update:
+    post:
+      operationId: planUpdate
+      summary: Запланировать обновление
+      description: Запланировать отправку обновления рассылки для клиента через некоторое время.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/Client"
+                - $ref: "#/components/schemas/MailingID"
+                - type: object
+                  properties:
+                    hours:
+                      type: integer
+                      description: Часы
+                    minutes:
+                      type: integer
+                      description: Минуты
+      responses:
+        202:
+          description: Обновление запланировано
+        403:
+          $ref: "#/components/responses/TokenError"
+        404:
+          description: Рассылка не найдена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Detail"
+        500:
+          $ref: "#/components/responses/UnknownError"
+
+  /schedule-update:
+    post:
+      operationId: scheduleUpdate
+      summary: Установить обновление по расписанию
+      description: Установить отправку обновения рассылки для клиента, начиная с определенного момента (дата и время). Обновление будет повторяться с заданным периодом.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "#/components/schemas/Client"
+                - $ref: "#/components/schemas/MailingID"
+                - type: object
+                  properties:
+                    time:
+                      type: string
+                      format: date-time
+                      description: Время (UTC)
+                    date:
+                      type: string
+                      format: time
+                      description: Дата (UTC)
+                    repeat:
+                      type: integer
+                      description: Период в минутах
+      responses:
+        202:
+          description: Обновление установлено
+        403:
+          $ref: "#/components/responses/TokenError"
+        404:
+          description: Рассылка не найдена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Detail"
+        500:
+          $ref: "#/components/responses/UnknownError"
