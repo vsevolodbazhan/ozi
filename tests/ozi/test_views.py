@@ -183,100 +183,65 @@ def test_subscribe_client_can_conflict(
     assert set(response.data.keys()) == set(["detail"])
 
 
-def test_subscribe_client_requires_authentication(
-    subscribe_client_url, client, _client, mailing
-):
-    data = {
-        "chat_id": _client.chat,
-        "bot_id": _client.bot,
-        "mailing_id": mailing.id,
-    }
-    response = client.post(subscribe_client_url, data, content_type="application/json")
+class TestUnsubscribeClient:
+    @pytest.fixture
+    def data(self, mailing, _client, config):
+        return {
+            "bot_id": _client.bot,
+            "chat_id": _client.chat,
+            "mailing_id": mailing.id,
+            **config,
+        }
 
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+    @pytest.fixture
+    def data_subscribed(self, mailing, subscribed_client, config):
+        return {
+            "bot_id": subscribed_client.bot,
+            "chat_id": subscribed_client.chat,
+            "mailing_id": mailing.id,
+            **config,
+        }
 
+    @pytest.fixture
+    def url(self):
+        return reverse("unsubscribe-client")
 
-def test_unsubscribe_client(
-    unsubscribe_client_url, client, config, subscribed_client, mailing
-):
-    data = {
-        "chat_id": subscribed_client.chat,
-        "bot_id": subscribed_client.bot,
-        "mailing_id": mailing.id,
-        **config,
-    }
-    response = client.post(
-        unsubscribe_client_url, data, content_type="application/json"
-    )
+    def test_subscribe_client_requires_authentication(self, client, url, data):
+        data.pop("config")
+        response = client.post(url, data, content_type="application/json")
 
-    assert response.status_code == status.HTTP_204_NO_CONTENT
-    assert subscribed_client.subscriptions.count() == 0
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
+    def test_unsubscribe_client(self, client, url, data_subscribed, subscribed_client):
+        response = client.post(
+            url,
+            data=data_subscribed,
+            content_type="application/json",
+        )
 
-def test_unsubscribe_client_creates_client(
-    unsubscribe_client_url, client, config, mailing, faker
-):
-    data = {
-        "chat_id": faker.pystr(),
-        "bot_id": faker.pystr(),
-        "mailing_id": mailing.id,
-        **config,
-    }
-    response = client.post(
-        unsubscribe_client_url, data, content_type="application/json"
-    )
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert subscribed_client.subscriptions.count() == 0
 
-    assert response.status_code == status.HTTP_409_CONFLICT
-    assert set(response.data.keys()) == set(["detail"])
+    def test_unsubscribe_client_creates_client(self, client, url, data, faker):
+        data["chat_id"] = faker.pystr()
+        data["bot_id"] = faker.pystr()
+        response = client.post(url, data, content_type="application/json")
 
+        assert response.status_code == status.HTTP_409_CONFLICT
+        assert set(response.data.keys()) == set(["detail"])
 
-def test_unsubscribe_client_can_conflict(
-    unsubscribe_client_url, client, config, _client, mailing
-):
-    data = {
-        "chat_id": _client.chat,
-        "bot_id": _client.bot,
-        "mailing_id": mailing.id,
-        **config,
-    }
-    response = client.post(
-        unsubscribe_client_url, data, content_type="application/json"
-    )
+    def test_unsubscribe_client_can_conflict(self, client, url, data):
+        response = client.post(url, data, content_type="application/json")
 
-    assert response.status_code == status.HTTP_409_CONFLICT
-    assert set(response.data.keys()) == set(["detail"])
+        assert response.status_code == status.HTTP_409_CONFLICT
+        assert set(response.data.keys()) == set(["detail"])
 
+    def test_unsubscribe_client_requires_mailing(self, client, url, data, faker):
+        data["mailing_id"] = faker.pyint()
+        response = client.post(url, data, content_type="application/json")
 
-def test_unsubscribe_client_requires_mailing(
-    unsubscribe_client_url, client, config, _client, faker
-):
-    data = {
-        "chat_id": _client.chat,
-        "bot_id": _client.bot,
-        "mailing_id": faker.pyint(),
-        **config,
-    }
-    response = client.post(
-        unsubscribe_client_url, data, content_type="application/json"
-    )
-
-    assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert set(response.data.keys()) == set(["detail"])
-
-
-def test_unsubscribe_client_requires_authentication(
-    unsubscribe_client_url, client, _client, mailing
-):
-    data = {
-        "chat_id": _client.chat,
-        "bot_id": _client.bot,
-        "mailing_id": mailing.id,
-    }
-    response = client.post(
-        unsubscribe_client_url, data, content_type="application/json"
-    )
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert set(response.data.keys()) == set(["detail"])
 
 
 class TestFindMailing:
