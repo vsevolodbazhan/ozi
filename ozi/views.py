@@ -35,7 +35,7 @@ def require_mailing(request):
 @api_view(["POST"])
 @authentication_classes([])
 def create_hook(request):
-    target = request.data["tomoruCallbackUrl"]
+    target = request.data["tomoru_callback_url"]
 
     Hook.objects.create(target=target)
 
