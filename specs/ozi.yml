@@ -144,9 +144,21 @@ paths:
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: "#/components/schemas/Client"
-                - $ref: "#/components/schemas/MailingID"
+              type: object
+              properties:
+                config:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
+                botId:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/botId"
+                chatId:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/chatId"
+                mailingId:
+                  $ref: "#/components/schemas/MailingID"
+              required:
+                - config
+                - botId
+                - chatId
+                - mailingId
       responses:
         204:
           description: Клиент успешно подписан
@@ -177,9 +189,21 @@ paths:
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: "#/components/schemas/Client"
-                - $ref: "#/components/schemas/MailingID"
+              type: object
+              properties:
+                config:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
+                botId:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/botId"
+                chatId:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/chatId"
+                mailingId:
+                  $ref: "#/components/schemas/MailingID"
+              required:
+                - config
+                - botId
+                - chatId
+                - mailingId
       responses:
         204:
           description: Клиент успешно отписан
@@ -213,10 +237,13 @@ paths:
             schema:
               type: object
               properties:
+                config:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
                 name:
                   type: string
                   description: Название
               required:
+                - config
                 - name
       responses:
         200:
@@ -224,7 +251,12 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/MailingID"
+                type: object
+                properties:
+                  mailingId:
+                    $ref: "#/components/schemas/MailingID"
+                required:
+                  - mailingId
         403:
           $ref: "#/components/responses/TokenError"
         404:
@@ -247,17 +279,27 @@ paths:
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: "#/components/schemas/Client"
-                - $ref: "#/components/schemas/MailingID"
-                - type: object
-                  properties:
-                    hours:
-                      type: integer
-                      description: Часы
-                    minutes:
-                      type: integer
-                      description: Минуты
+              type: object
+              properties:
+                config:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
+                botId:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/botId"
+                chatId:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/chatId"
+                mailingId:
+                  $ref: "#/components/schemas/MailingID"
+                hours:
+                  type: integer
+                  description: Часы
+                minutes:
+                  type: integer
+                  description: Минуты
+              required:
+                - config
+                - botId
+                - chatId
+                - mailingId
       responses:
         202:
           description: Обновление запланировано
@@ -283,22 +325,32 @@ paths:
         content:
           application/json:
             schema:
-              allOf:
-                - $ref: "#/components/schemas/Client"
-                - $ref: "#/components/schemas/MailingID"
-                - type: object
-                  properties:
-                    time:
-                      type: string
-                      format: date-time
-                      description: Время (UTC)
-                    date:
-                      type: string
-                      format: time
-                      description: Дата (UTC)
-                    repeat:
-                      type: integer
-                      description: Период в минутах
+              type: object
+              properties:
+                config:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
+                botId:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/botId"
+                chatId:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/chatId"
+                mailingId:
+                  $ref: "#/components/schemas/MailingID"
+                time:
+                  type: string
+                  format: date-time
+                  description: Время (UTC)
+                date:
+                  type: string
+                  format: time
+                  description: Дата (UTC)
+                repeat:
+                  type: integer
+                  description: Период в минутах
+              required:
+                - config
+                - botId
+                - chatId
+                - mailingId
       responses:
         202:
           description: Обновление установлено
@@ -310,5 +362,54 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Detail"
+        500:
+          $ref: "#/components/responses/UnknownError"
+
+  /create-hook:
+    post:
+      operationId: subscribeOnUpdates
+      summary: Подписаться на обновления рассылок
+      tags:
+        - tomoru/subscribe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tomoruCallbackUrl:
+                  type: string
+              required:
+                - tomoruCallbackUrl
+      callbacks:
+        newUpdate:
+          "{$request.body#/tomoruCallbackUrl}":
+            post:
+              summary: Новое обновление
+              description: Новое обновление рассылки.
+              requestBody:
+                content:
+                  application/json:
+                    schema:
+                      allOf:
+                        - $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruEvent"
+                        - type: object
+                          properties:
+                            data:
+                              type: object
+                              properties:
+                                mailing:
+                                  type: string
+                                  description: Название рассылки
+                              required:
+                                - mailing
+              responses:
+                200:
+                  description: Обновление получено
+                500:
+                  $ref: "#/components/responses/UnknownError"
+      responses:
+        201:
+          description: Подписка оформлена
         500:
           $ref: "#/components/responses/UnknownError"
