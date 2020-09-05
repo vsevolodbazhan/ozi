@@ -279,35 +279,40 @@ def test_unsubscribe_client_requires_authentication(
     assert response.status_code == status.HTTP_403_FORBIDDEN
 
 
-def test_find_mailing_by_exact_name(find_mailing_url, client, config, mailing):
-    data = {"name": mailing.name, **config}
-    response = client.post(find_mailing_url, data, content_type="application/json")
+class TestFindMailing:
+    @pytest.fixture
+    def data(self, mailing, config):
+        return {"name": mailing.name, **config}
 
-    assert response.status_code == status.HTTP_200_OK
-    assert response.data["mailing_id"] == mailing.id
+    @pytest.fixture
+    def url(self):
+        return reverse("find-mailing")
 
+    def test_find_mailing_requires_authentication(self, client, url, data):
+        data.pop("config")
+        response = client.post(url, data, content_type="application/json")
 
-def test_find_mailing_by_fuzzy_name(find_mailing_url, client, config, mailing):
-    data = {"name": mailing.name.lower() + "x", **config}
-    response = client.post(find_mailing_url, data, content_type="application/json")
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    assert response.status_code == status.HTTP_200_OK
-    assert response.data["mailing_id"] == mailing.id
+    def test_find_mailing_by_exact_name(self, client, url, data, mailing):
+        response = client.post(url, data, content_type="application/json")
 
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["mailing_id"] == mailing.id
 
-def test_find_mailing_can_fail(find_mailing_url, client, config, mailing, faker):
-    data = {"name": mailing.name.lower() + faker.pystr(), **config}
-    response = client.post(find_mailing_url, data, content_type="application/json")
+    def test_find_mailing_by_fuzzy_name(self, client, url, data, mailing):
+        data["name"] = mailing.name.lower() + "x"
+        response = client.post(url, data, content_type="application/json")
 
-    assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert set(response.data.keys()) == set(["detail"])
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["mailing_id"] == mailing.id
 
+    def test_find_mailing_can_fail(self, client, url, data, mailing, faker):
+        data["name"] = mailing.name.lower() + faker.pystr()
+        response = client.post(url, data, content_type="application/json")
 
-def test_find_mailing_requires_authentication(find_mailing_url, client, faker):
-    data = {"name": faker.pystr()}
-    response = client.post(find_mailing_url, data, content_type="application/json")
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert set(response.data.keys()) == set(["detail"])
 
 
 class TestPlanUpdate:
@@ -331,8 +336,8 @@ class TestPlanUpdate:
         }
 
     @pytest.fixture
-    def url(self, plan_update_url):
-        return plan_update_url
+    def url(self):
+        return reverse("plan-update")
 
     def test_plan_update_requires_authentication(self, url, client, data):
         data.pop("config")
