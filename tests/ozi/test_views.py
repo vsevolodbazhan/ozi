@@ -124,63 +124,63 @@ def test_list_subscriptions_requires_authentication(list_subscriptions_url, clie
     assert set(response.data.keys()) == set(["detail"])
 
 
-def test_subscribe_client(subscribe_client_url, client, config, _client, mailing):
-    url = reverse("subscribe-client")
-    data = {
-        "chat_id": _client.chat,
-        "bot_id": _client.bot,
-        "mailing_id": mailing.id,
-        **config,
-    }
-    response = client.post(url, data, content_type="application/json")
+class TestSubscribeClient:
+    @pytest.fixture
+    def data(self, mailing, _client, config):
+        return {
+            "bot_id": _client.bot,
+            "chat_id": _client.chat,
+            "mailing_id": mailing.id,
+            **config,
+        }
 
-    assert response.status_code == status.HTTP_204_NO_CONTENT
-    assert _client.subscriptions.count() == 1
+    @pytest.fixture
+    def data_subscribed(self, mailing, subscribed_client, config):
+        return {
+            "bot_id": subscribed_client.bot,
+            "chat_id": subscribed_client.chat,
+            "mailing_id": mailing.id,
+            **config,
+        }
 
+    @pytest.fixture
+    def url(self):
+        return reverse("subscribe-client")
 
-def test_subscribe_client_creates_client(
-    subscribe_client_url, client, config, mailing, faker
-):
-    data = {
-        "chat_id": faker.pystr(),
-        "bot_id": faker.pystr(),
-        "mailing_id": mailing.id,
-        **config,
-    }
-    response = client.post(subscribe_client_url, data, content_type="application/json")
+    def test_subscribe_client_requires_authentication(self, client, url, data):
+        data.pop("config")
+        response = client.post(url, data, content_type="application/json")
 
-    assert response.status_code == status.HTTP_204_NO_CONTENT
-    assert Client.objects.count() == 1
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
+    def test_subscribe_client(self, client, url, data, _client):
+        response = client.post(url, data, content_type="application/json")
 
-def test_subscribe_client_requires_mailing(
-    subscribe_client_url, client, config, _client, faker
-):
-    data = {
-        "chat_id": _client.chat,
-        "bot_id": _client.bot,
-        "mailing_id": faker.pyint(),
-        **config,
-    }
-    response = client.post(subscribe_client_url, data, content_type="application/json")
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert _client.subscriptions.count() == 1
 
-    assert response.status_code == status.HTTP_404_NOT_FOUND
-    assert set(response.data.keys()) == set(["detail"])
+    def test_subscribe_client_creates_client(self, client, url, data, faker):
+        data["chat_id"] = faker.pystr()
+        data["bot_id"] = faker.pystr()
+        response = client.post(url, data, content_type="application/json")
 
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert Client.objects.count() == 2
 
-def test_subscribe_client_can_conflict(
-    subscribe_client_url, client, config, subscribed_client, mailing
-):
-    data = {
-        "chat_id": subscribed_client.chat,
-        "bot_id": subscribed_client.bot,
-        "mailing_id": mailing.id,
-        **config,
-    }
-    response = client.post(subscribe_client_url, data, content_type="application/json")
+    def test_subscribe_client_requires_mailing(self, client, url, data, faker):
+        data["mailing_id"] = faker.pyint()
+        response = client.post(url, data, content_type="application/json")
 
-    assert response.status_code == status.HTTP_409_CONFLICT
-    assert set(response.data.keys()) == set(["detail"])
+        assert response.status_code == status.HTTP_404_NOT_FOUND
+        assert set(response.data.keys()) == set(["detail"])
+
+    def test_subscribe_client_can_conflict(self, client, url, data_subscribed):
+        response = client.post(
+            url, data=data_subscribed, content_type="application/json"
+        )
+
+        assert response.status_code == status.HTTP_409_CONFLICT
+        assert set(response.data.keys()) == set(["detail"])
 
 
 class TestUnsubscribeClient:
