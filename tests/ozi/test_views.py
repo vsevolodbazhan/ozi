@@ -25,57 +25,34 @@ def subscribed_client(db, mailing, faker):
     return client
 
 
-@pytest.fixture
-def list_mailings_url():
-    return reverse("list-mailings")
+class TestListMailings:
+    @pytest.fixture
+    def data(self, config):
+        return config
 
+    @pytest.fixture
+    def url(self):
+        return reverse("list-mailings")
 
-@pytest.fixture
-def list_subscriptions_url():
-    return reverse("list-subscriptions")
+    def test_list_mailings_with_no_mailings(self, client, url, data):
+        response = client.post(url, data, content_type="application/json")
 
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
-@pytest.fixture
-def subscribe_client_url():
-    return reverse("subscribe-client")
+    def test_list_mailings(self, client, url, data, user, faker):
+        for _ in range(5):
+            Mailing.objects.create(user=user, name=faker.pystr())
 
+        response = client.post(url, data, content_type="application/json")
 
-@pytest.fixture
-def unsubscribe_client_url():
-    return reverse("unsubscribe-client")
+        assert response.status_code == status.HTTP_200_OK
+        assert set(response.data.keys()) == set(["mailings"])
 
+    def test_list_mailings_requires_authentication(self, client, url, data):
+        response = client.post(url, content_type="application/json")
 
-@pytest.fixture
-def find_mailing_url():
-    return reverse("find-mailing")
-
-
-@pytest.fixture
-def plan_update_url():
-    return reverse("plan-update")
-
-
-def test_list_mailings_with_no_mailings(list_mailings_url, client, config):
-    response = client.post(list_mailings_url, config, content_type="application/json")
-
-    assert response.status_code == status.HTTP_204_NO_CONTENT
-
-
-def test_list_mailings(list_mailings_url, client, config, user, faker):
-    for _ in range(5):
-        Mailing.objects.create(user=user, name=faker.pystr())
-
-    response = client.post(list_mailings_url, config, content_type="application/json")
-
-    assert response.status_code == status.HTTP_200_OK
-    assert set(response.data.keys()) == set(["mailings"])
-
-
-def test_list_mailings_requires_authentication(list_mailings_url, client):
-    response = client.post(list_mailings_url, content_type="application/json")
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-    assert set(response.data.keys()) == set(["detail"])
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert set(response.data.keys()) == set(["detail"])
 
 
 class TestListSubscriptions:
