@@ -78,50 +78,42 @@ def test_list_mailings_requires_authentication(list_mailings_url, client):
     assert set(response.data.keys()) == set(["detail"])
 
 
-def test_list_subscriptions_with_no_subscriptions(
-    list_subscriptions_url, client, config, _client, faker
-):
-    data = {"bot_id": _client.bot, "chat_id": _client.chat, **config}
-    response = client.post(
-        list_subscriptions_url, data, content_type="application/json"
-    )
+class TestListSubscriptions:
+    @pytest.fixture
+    def data(self, _client, config):
+        return {"bot_id": _client.bot, "chat_id": _client.chat, **config}
 
-    assert response.status_code == status.HTTP_204_NO_CONTENT
+    @pytest.fixture
+    def url(self):
+        return reverse("list-subscriptions")
 
+    def test_list_subscriptions_with_no_subscriptions(self, client, url, data):
+        response = client.post(url, data, content_type="application/json")
 
-def test_list_subscriptions(
-    list_subscriptions_url, client, config, user, _client, faker
-):
-    for _ in range(5):
-        mailing = Mailing.objects.create(user=user, name=faker.pystr())
-        _client.subscriptions.add(mailing)
+        assert response.status_code == status.HTTP_204_NO_CONTENT
 
-    data = {"bot_id": _client.bot, "chat_id": _client.chat, **config}
-    response = client.post(
-        list_subscriptions_url, data, content_type="application/json"
-    )
+    def test_list_subscriptions(self, client, url, data, user, _client, faker):
+        for _ in range(5):
+            mailing = Mailing.objects.create(user=user, name=faker.pystr())
+            _client.subscriptions.add(mailing)
 
-    assert response.status_code == status.HTTP_200_OK
-    assert set(response.data.keys()) == set(["subscriptions"])
+        response = client.post(url, data, content_type="application/json")
 
+        assert response.status_code == status.HTTP_200_OK
+        assert set(response.data.keys()) == set(["subscriptions"])
 
-def test_list_subscriptions_creates_client(
-    list_subscriptions_url, client, config, faker
-):
-    data = {"bot_id": faker.pystr(), "chat_id": faker.pystr(), **config}
-    response = client.post(
-        list_subscriptions_url, data, content_type="application/json"
-    )
+    def test_list_subscriptions_creates_client(self, client, url, data):
+        response = client.post(url, data, content_type="application/json")
 
-    assert response.status_code == status.HTTP_204_NO_CONTENT
-    assert Client.objects.count() == 1
+        assert response.status_code == status.HTTP_204_NO_CONTENT
+        assert Client.objects.count() == 1
 
+    def test_list_subscriptions_requires_authentication(self, client, url, data):
+        data.pop("config")
+        response = client.post(url, content_type="application/json")
 
-def test_list_subscriptions_requires_authentication(list_subscriptions_url, client):
-    response = client.post(list_subscriptions_url, content_type="application/json")
-
-    assert response.status_code == status.HTTP_403_FORBIDDEN
-    assert set(response.data.keys()) == set(["detail"])
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert set(response.data.keys()) == set(["detail"])
 
 
 class TestSubscribeClient:
