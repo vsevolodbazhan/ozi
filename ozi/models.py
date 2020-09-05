@@ -1,7 +1,7 @@
 from background_task.models import Task
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 
 from comparator import distance_is_acceptable, levenshtein_distance, normalize
@@ -115,13 +115,22 @@ class Update(models.Model):
 
 
 @receiver(post_save, sender=Task)
-def create_update(sender, instance=None, created=False, **kwargs):
+def create_update(sender, instance, created=False, **kwargs):
     if not created:
         return
 
-    task = instance
-    parameters = retrieve_task_parameters(task)
+    parameters = retrieve_task_parameters(instance)
+
     user = User.objects.get(id=parameters["user_id"])
     mailing = Mailing.objects.get(id=parameters["mailing_id"])
 
-    Update.objects.create(task=task, user=user, mailing=mailing)
+    client = None
+    if client_id := parameters.get("client_id"):
+        client = Client.objects.get(id=client_id)
+
+    Update.objects.create(task=instance, user=user, mailing=mailing, client=client)
+
+
+@receiver(post_delete, sender=Update)
+def delete_task(sender, instance, **kwargs):
+    instance.task.delete()

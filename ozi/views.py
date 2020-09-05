@@ -95,18 +95,27 @@ def find_mailing(request):
 @api_view(["POST"])
 def plan_update(request):
     mailing = require_mailing(request)
+    client = require_client(request)
+
     hours = request.data.get("hours", 0)
     minutes = request.data.get("minutes", 0)
 
     timestamp = timezone.now() + timedelta(hours=hours, minutes=minutes)
 
-    send_event(user_id=request.user.id, mailing_id=mailing.id, schedule=timestamp)
+    send_event(
+        user_id=request.user.id,
+        mailing_id=mailing.id,
+        client_id=client.id,
+        schedule=timestamp,
+    )
     return Response(status=status.HTTP_202_ACCEPTED)
 
 
 @api_view(["POST"])
 def schedule_update(request):
     mailing = require_mailing(request)
+    client = require_client(request)
+
     time = request.data.get("time")
     date = request.data.get("date")
     repeat = request.data.get("repeat", 0) * NUMBER_OF_SECONDS_IN_MINUTE
@@ -120,6 +129,7 @@ def schedule_update(request):
     send_event(
         user_id=request.user.id,
         mailing_id=mailing.id,
+        client_id=client.id,
         schedule=timestamp,
         repeat=repeat,
     )
