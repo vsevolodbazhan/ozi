@@ -14,6 +14,9 @@ info:
       required:
         - token
 
+servers:
+  - url: https://tomoru-mailings.herokuapp.com/api
+
 components:
   schemas:
     Client:
