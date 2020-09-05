@@ -72,7 +72,7 @@ class Client(models.Model):
 
 
 class Hook(models.Model):
-    target = models.URLField()
+    target = models.URLField(max_length=500)
 
     def __str__(self):
         return self.target
