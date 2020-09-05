@@ -2,11 +2,11 @@ from datetime import timedelta, datetime, date as _date, time as _time
 
 from django.utils import timezone
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.response import Response
 
 from . import exceptions
-from .models import Client, Mailing
+from .models import Client, Mailing, Hook
 from .tasks import send_event
 from .utilities import stringify
 from .constants import NUMBER_OF_SECONDS_IN_MINUTE
@@ -30,6 +30,16 @@ def require_mailing(request):
         raise exceptions.NotFound("Could not find a mailing with the provided ID.")
 
     return mailing
+
+
+@api_view(["POST"])
+@authentication_classes([])
+def create_hook(request):
+    target = request.data["tomoruCallbackUrl"]
+
+    Hook.objects.create(target=target)
+
+    return Response(status=status.HTTP_201_CREATED)
 
 
 @api_view(["POST"])
