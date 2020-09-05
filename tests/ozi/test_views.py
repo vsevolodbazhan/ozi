@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework import status
 
-from ozi.models import Client, Mailing
+from ozi.models import Client, Mailing, Update
 
 User = get_user_model()
 
@@ -48,6 +48,11 @@ def unsubscribe_client_url():
 @pytest.fixture
 def find_mailing_url():
     return reverse("find-mailing")
+
+
+@pytest.fixture
+def plan_update_url():
+    return reverse("plan-update")
 
 
 def test_list_mailings_with_no_mailings(list_mailings_url, client, config):
@@ -303,3 +308,50 @@ def test_find_mailing_requires_authentication(find_mailing_url, client, faker):
     response = client.post(find_mailing_url, data, content_type="application/json")
 
     assert response.status_code == status.HTTP_403_FORBIDDEN
+
+
+class TestPlanUpdate:
+    @pytest.fixture
+    def hours(self, faker):
+        return faker.pyint()
+
+    @pytest.fixture
+    def minutes(self, faker):
+        return faker.pyint()
+
+    @pytest.fixture
+    def data(self, _client, mailing, hours, minutes, config):
+        return {
+            "mailingId": mailing.id,
+            "botId": _client.bot,
+            "chatId": _client.chat,
+            "hours": hours,
+            "minutes": minutes,
+            **config,
+        }
+
+    @pytest.fixture
+    def url(self, plan_update_url):
+        return plan_update_url
+
+    def test_plan_update_requires_authentication(self, url, client, data):
+        data.pop("config")
+        response = client.post(url, data, content_type="application/json")
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_plan_update_creates_update(self, client, url, data):
+        response = client.post(url, data, content_type="application/json")
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Update.objects.count() == 1
+
+    def test_plan_update_creates_update_without_hours_and_minutes(
+        self, client, url, data
+    ):
+        data.pop("hours")
+        data.pop("minutes")
+        response = client.post(url, data, content_type="application/json")
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Update.objects.count() == 1
