@@ -139,9 +139,9 @@ def schedule_update(user, mailing, clients, parameters):
 
     for client in clients:
         send_event(
-            user_id=user.id,
-            mailing_id=mailing.id,
-            client_id=client.id,
+            user_id=str(user.id),
+            mailing_id=str(mailing.id),
+            client_id=str(client.id),
             schedule=timestamp,
             repeat=repeat,
         )

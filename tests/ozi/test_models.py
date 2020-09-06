@@ -53,7 +53,6 @@ class TestMailing:
 
         mailing = Mailing.find_by_fuzzy_name(fuzzy_name, mailings)
 
-        assert mailing.id == 1
         assert mailing.name == "Mailing 1"
 
 
@@ -113,8 +112,8 @@ class TestClient:
         clients = Client.objects.get_subscribed(mailing_1)
 
         assert clients.count() == 2
-        assert clients.first() == client_1
-        assert clients.last() == client_2
+        assert clients.filter(id=client_1.id).exists()
+        assert clients.filter(id=client_2.id).exists()
 
 
 @pytest.mark.django_db
@@ -143,9 +142,9 @@ class TestUpdate:
                 [
                     [],
                     {
-                        "user_id": user.id,
-                        "mailing_id": mailing.id,
-                        "client_id": client.id,
+                        "user_id": str(user.id),
+                        "mailing_id": str(mailing.id),
+                        "client_id": str(client.id),
                     },
                 ]
             ),

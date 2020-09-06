@@ -33,7 +33,7 @@ components:
         - botId
         - chatId
     MailingID:
-      type: integer
+      type: string
       description: Идентификатор рассылки
     Detail:
       type: object
