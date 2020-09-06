@@ -1,18 +1,28 @@
+import json
+import os
+
 import apiclient.discovery
 import httplib2
 from oauth2client.service_account import ServiceAccountCredentials
 
 CREDENTIALS_FILE = "creds.json"
+CREDENTIALS_VARIABLE_NAME = "SHEETS_API_CREDS"
 
 
 def setup_service(credentials_file=CREDENTIALS_FILE):
-    credentials = ServiceAccountCredentials.from_json_keyfile_name(
-        credentials_file,
-        [
-            "https://www.googleapis.com/auth/spreadsheets",
-            "https://www.googleapis.com/auth/drive",
-        ],
-    )
+    apis_list = [
+        "https://www.googleapis.com/auth/spreadsheets",
+        "https://www.googleapis.com/auth/drive",
+    ]
+    try:
+        credentials = ServiceAccountCredentials.from_json_keyfile_name(
+            credentials_file, apis_list
+        )
+    except FileNotFoundError:
+        credentials_data = json.loads(os.environ[CREDENTIALS_VARIABLE_NAME])
+        credentials = ServiceAccountCredentials.from_json_keyfile_dict(
+            credentials_data, apis_list
+        )
     httpAuth = credentials.authorize(httplib2.Http())
     service = apiclient.discovery.build("sheets", "v4", http=httpAuth)
     return service
