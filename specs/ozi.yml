@@ -393,10 +393,10 @@ paths:
                   description: Столбец
                 rangeStart:
                   type: integer
-                  description: Начало диапозона
+                  description: Начало диапазона
                 rangeEnd:
                   type: integer
-                  description: Конец диапозона
+                  description: Конец диапазона
               required:
                 - spreadsheetId
                 - column
@@ -419,12 +419,6 @@ paths:
           description: Чаты не найдены
         403:
           $ref: "#/components/responses/TokenError"
-        404:
-          description: Рассылка не найдена
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Detail"
         500:
           $ref: "#/components/responses/UnknownError"
 
