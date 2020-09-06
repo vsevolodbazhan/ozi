@@ -376,7 +376,7 @@ paths:
   /extract-chats:
     post:
       operationId: extractChats
-      summary: Получить список чатов из Google Таблиц
+      summary: Получить список чатов из Google Таблицы
       tags:
         - tomoru/call
       requestBody:
