@@ -1,18 +1,21 @@
+import uuid
+
 from background_task.models import Task
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.db.models.signals import post_save, post_delete
+from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
 from comparator import distance_is_acceptable, levenshtein_distance, normalize
 
-from .utilities import retrieve_task_parameters
 from .constants import NUMBER_OF_SECONDS_IN_MINUTE
+from .utilities import retrieve_task_parameters
 
 User = get_user_model()
 
 
 class Mailing(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     common = models.BooleanField(default=True)
@@ -50,6 +53,7 @@ class ClientManager(models.Manager):
 
 
 class Client(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     bot = models.CharField(max_length=50)
     chat = models.CharField(max_length=50)
     subscriptions = models.ManyToManyField(Mailing)
@@ -73,6 +77,7 @@ class Client(models.Model):
 
 
 class Hook(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     target = models.URLField(max_length=500)
 
     def __str__(self):
@@ -84,6 +89,7 @@ class Hook(models.Model):
 
 
 class Update(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     task = models.ForeignKey(Task, on_delete=models.CASCADE, editable=False)
 
     user = models.ForeignKey(User, on_delete=models.CASCADE)
