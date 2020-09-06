@@ -1,15 +1,20 @@
-from datetime import timedelta, datetime, date as _date, time as _time
+from datetime import date as _date
+from datetime import datetime
+from datetime import time as _time
+from datetime import timedelta
 
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.response import Response
 
+from sheets import extract_values
+
 from . import exceptions
-from .models import Client, Mailing, Hook
+from .constants import NUMBER_OF_SECONDS_IN_MINUTE
+from .models import Client, Hook, Mailing
 from .tasks import send_event
 from .utilities import stringify
-from .constants import NUMBER_OF_SECONDS_IN_MINUTE
 
 
 def require_client(request):
@@ -144,3 +149,19 @@ def schedule_update(request):
         repeat=repeat,
     )
     return Response(status=status.HTTP_202_ACCEPTED)
+
+
+@api_view(["POST"])
+def extract_chats_from_sheet(request):
+    values = extract_values(
+        spreadsheet_id=request.data["spreadsheet_id"],
+        column=request.data["column"],
+        range_start=request.data["range_start"],
+        range_end=request.data["range_end"],
+    )
+
+    if values is None:
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+    data = {"chats": stringify(values)}
+    return Response(data=data, status=status.HTTP_200_OK)

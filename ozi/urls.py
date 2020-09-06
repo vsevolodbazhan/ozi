@@ -15,4 +15,7 @@ urlpatterns = [
     path("find-mailing", views.find_mailing, name="find-mailing"),
     path("plan-update", views.plan_update, name="plan-update"),
     path("schedule-update", views.schedule_update, name="schedule-update"),
+    path(
+        "extract-chats", views.extract_chats_from_sheet, name="extract-chats-from-sheet"
+    ),
 ]
