@@ -15,6 +15,7 @@ User = get_user_model()
 class Mailing(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
+    common = models.BooleanField(default=True)
 
     @staticmethod
     def find_by_fuzzy_name(name, mailings):

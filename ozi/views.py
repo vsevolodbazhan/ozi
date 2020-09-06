@@ -49,7 +49,7 @@ def create_hook(request):
 
 @api_view(["POST"])
 def list_mailings(request):
-    mailings = Mailing.objects.filter(user=request.user)
+    mailings = Mailing.objects.filter(user=request.user, common=True)
 
     if not mailings:
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -97,7 +97,7 @@ def unsubscribe_client(request):
 @api_view(["POST"])
 def find_mailing(request):
     name = request.data["name"]
-    mailings = Mailing.objects.filter(user=request.user)
+    mailings = Mailing.objects.filter(user=request.user, common=True)
 
     most_similar_mailing = Mailing.find_by_fuzzy_name(name, mailings)
     if most_similar_mailing is None:
