@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Ozi
-  version: 0.1.0
+  version: 0.2.0
   description: Управление рассылками.
   x-config:
     schema:
@@ -268,56 +268,10 @@ paths:
         500:
           $ref: "#/components/responses/UnknownError"
 
-  /plan-update:
-    post:
-      operationId: planUpdate
-      summary: Запланировать обновление
-      description: Запланировать отправку обновления рассылки для клиента через некоторое время.
-      tags:
-        - tomoru/call
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                config:
-                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
-                botId:
-                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/botId"
-                chatId:
-                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/chatId"
-                mailingId:
-                  $ref: "#/components/schemas/MailingID"
-                hours:
-                  type: integer
-                  description: Часы
-                minutes:
-                  type: integer
-                  description: Минуты
-              required:
-                - config
-                - botId
-                - chatId
-                - mailingId
-      responses:
-        202:
-          description: Обновление запланировано
-        403:
-          $ref: "#/components/responses/TokenError"
-        404:
-          description: Рассылка не найдена
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Detail"
-        500:
-          $ref: "#/components/responses/UnknownError"
-
   /schedule-update:
     post:
       operationId: scheduleUpdate
-      summary: Установить обновление по расписанию
+      summary: Установить обновление по расписанию для клиента
       description: Установить отправку обновения рассылки для клиента, начиная с определенного момента (дата и время). Обновление будет повторяться с заданным периодом.
       tags:
         - tomoru/call
@@ -354,6 +308,115 @@ paths:
       responses:
         202:
           description: Обновление установлено
+        403:
+          $ref: "#/components/responses/TokenError"
+        404:
+          description: Рассылка не найдена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Detail"
+        500:
+          $ref: "#/components/responses/UnknownError"
+
+  /schedule-updates:
+    post:
+      operationId: scheduleUpdates
+      summary: Установить обновление по расписанию для всех
+      description:
+        Установить отправку обновения рассылки для всех клиентов, начиная с определенного момента (дата и время).
+        Обновление будет повторяться с заданным периодом.
+        Если предоставлен список чатов, то обновление будет установлено только для предоставленных чатов.
+      tags:
+        - tomoru/call
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                config:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
+                botId:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/botId"
+                mailingId:
+                  $ref: "#/components/schemas/MailingID"
+                chats:
+                  type: string
+                  description: Список чатов
+                time:
+                  type: string
+                  format: date-time
+                  description: Время (UTC)
+                date:
+                  type: string
+                  format: time
+                  description: Дата (UTC)
+                repeat:
+                  type: integer
+                  description: Период в минутах
+              required:
+                - config
+                - botId
+                - mailingId
+      responses:
+        202:
+          description: Обновление установлено
+        403:
+          $ref: "#/components/responses/TokenError"
+        404:
+          description: Рассылка не найдена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Detail"
+        500:
+          $ref: "#/components/responses/UnknownError"
+
+  /extract-chats:
+    post:
+      operationId: extractChats
+      summary: Получить список чатов из Google Таблиц
+      tags:
+        - tomoru/call
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                spreadsheetId:
+                  type: string
+                  description: Идентификатор таблицы
+                column:
+                  type: string
+                  description: Столбец
+                rangeStart:
+                  type: integer
+                  description: Начало диапозона
+                rangeEnd:
+                  type: integer
+                  description: Конец диапозона
+              required:
+                - spreadsheetId
+                - column
+                - rangeStart
+                - rangeEnd
+      responses:
+        200:
+          description: Чаты найдены
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chats:
+                    type: string
+                    description: Список чатов
+                required:
+                  - chats
+        204:
+          description: Чаты не найдены
         403:
           $ref: "#/components/responses/TokenError"
         404:
