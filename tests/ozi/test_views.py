@@ -249,51 +249,51 @@ class TestFindMailing:
         assert set(response.data.keys()) == set(["detail"])
 
 
-# class TestPlanUpdate:
-#     @pytest.fixture
-#     def hours(self, faker):
-#         return faker.pyint()
+class TestPlanUpdate:
+    @pytest.fixture
+    def hours(self, faker):
+        return faker.pyint()
 
-#     @pytest.fixture
-#     def minutes(self, faker):
-#         return faker.pyint()
+    @pytest.fixture
+    def minutes(self, faker):
+        return faker.pyint()
 
-#     @pytest.fixture
-#     def data(self, _client, mailing, hours, minutes, config):
-#         return {
-#             "mailingId": mailing.id,
-#             "botId": _client.bot,
-#             "chatId": _client.chat,
-#             "hours": hours,
-#             "minutes": minutes,
-#             **config,
-#         }
+    @pytest.fixture
+    def data(self, _client, mailing, hours, minutes, config):
+        return {
+            "mailingId": mailing.id,
+            "botId": _client.bot,
+            "chatId": _client.chat,
+            "hours": hours,
+            "minutes": minutes,
+            **config,
+        }
 
-#     @pytest.fixture
-#     def url(self):
-#         return reverse("plan-update")
+    @pytest.fixture
+    def url(self):
+        return reverse("plan-update-for-client")
 
-#     def test_plan_update_requires_authentication(self, url, client, data):
-#         data.pop("config")
-#         response = client.post(url, data, content_type="application/json")
+    def test_plan_update_requires_authentication(self, url, client, data):
+        data.pop("config")
+        response = client.post(url, data, content_type="application/json")
 
-#         assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.status_code == status.HTTP_403_FORBIDDEN
 
-#     def test_plan_update_creates_update(self, client, url, data):
-#         response = client.post(url, data, content_type="application/json")
+    def test_plan_update_creates_update(self, client, url, data):
+        response = client.post(url, data, content_type="application/json")
 
-#         assert response.status_code == status.HTTP_202_ACCEPTED
-#         assert Update.objects.count() == 1
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Update.objects.count() == 1
 
-#     def test_plan_update_creates_update_without_hours_and_minutes(
-#         self, client, url, data
-#     ):
-#         data.pop("hours")
-#         data.pop("minutes")
-#         response = client.post(url, data, content_type="application/json")
+    def test_plan_update_creates_update_without_hours_and_minutes(
+        self, client, url, data
+    ):
+        data.pop("hours")
+        data.pop("minutes")
+        response = client.post(url, data, content_type="application/json")
 
-#         assert response.status_code == status.HTTP_202_ACCEPTED
-#         assert Update.objects.count() == 1
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Update.objects.count() == 1
 
 
 class TestScheduleUpdate:
