@@ -126,14 +126,10 @@ def plan_update(request):
     return Response(status=status.HTTP_202_ACCEPTED)
 
 
-@api_view(["POST"])
-def schedule_update(request):
-    mailing = require_mailing(request)
-    client = require_client(request)
-
-    time = request.data.get("time")
-    date = request.data.get("date")
-    repeat = request.data.get("repeat", 0) * NUMBER_OF_SECONDS_IN_MINUTE
+def schedule_update(user, mailing, clients, parameters):
+    time = parameters.get("time")
+    date = parameters.get("date")
+    repeat = parameters.get("repeat", 0) * NUMBER_OF_SECONDS_IN_MINUTE
 
     time, date = (
         timezone.now().time() if time is None else _time.fromisoformat(time),
@@ -141,14 +137,42 @@ def schedule_update(request):
     )
     timestamp = timezone.make_aware(datetime.combine(date=date, time=time))
 
-    send_event(
-        user_id=request.user.id,
-        mailing_id=mailing.id,
-        client_id=client.id,
-        schedule=timestamp,
-        repeat=repeat,
-    )
+    for client in clients:
+        send_event(
+            user_id=user.id,
+            mailing_id=mailing.id,
+            client_id=client.id,
+            schedule=timestamp,
+            repeat=repeat,
+        )
     return Response(status=status.HTTP_202_ACCEPTED)
+
+
+@api_view(["POST"])
+def schedule_update_for_all(request):
+    user = request.user
+    mailing = require_mailing(request)
+
+    if chats := request.data.get("chats"):
+        bot = request.data["bot_id"]
+        clients = []
+        for chat in chats.split(", "):
+            client, _ = Client.objects.get_or_create(bot=bot, chat=chat)
+            client.subscriptions.add(mailing)
+            clients.append(client)
+    else:
+        clients = Client.objects.get_subscribed(mailing)
+
+    return schedule_update(user, mailing, clients, parameters=request.data)
+
+
+@api_view(["POST"])
+def schedule_update_for_client(request):
+    user = request.user
+    mailing = require_mailing(request)
+    client = require_client(request)
+
+    return schedule_update(user, mailing, clients=[client], parameters=request.data)
 
 
 @api_view(["POST"])

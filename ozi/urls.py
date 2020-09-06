@@ -14,7 +14,16 @@ urlpatterns = [
     path("unsubscribe", views.unsubscribe_client, name="unsubscribe-client"),
     path("find-mailing", views.find_mailing, name="find-mailing"),
     path("plan-update", views.plan_update, name="plan-update"),
-    path("schedule-update", views.schedule_update, name="schedule-update"),
+    path(
+        "schedule-update",
+        views.schedule_update_for_client,
+        name="schedule-update-for-client",
+    ),
+    path(
+        "schedule-updates",
+        views.schedule_update_for_all,
+        name="schedule-update-for-all",
+    ),
     path(
         "extract-chats", views.extract_chats_from_sheet, name="extract-chats-from-sheet"
     ),
