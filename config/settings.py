@@ -46,6 +46,8 @@ INSTALLED_APPS = [
     "ozi",
 ]
 
+BACKGROUND_TASK_RUN_ASYNC = True
+
 AUTH_USER_MODEL = "accounts.User"
 
 MIDDLEWARE = [
