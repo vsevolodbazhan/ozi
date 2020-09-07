@@ -2,7 +2,7 @@ openapi: 3.0.3
 
 info:
   title: Ozi
-  version: 0.2.0
+  version: 0.3.0
   description: Управление рассылками.
   x-config:
     schema:
