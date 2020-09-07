@@ -268,6 +268,101 @@ paths:
         500:
           $ref: "#/components/responses/UnknownError"
 
+  /plan-update:
+    post:
+      operationId: planUpdate
+      summary: Запланировать обновление для клиента
+      description: Запланировать обновление рассылки для клиента. Обновление придет через заданное количество минут и часов.
+      tags:
+        - tomoru/call
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                config:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
+                botId:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/botId"
+                chatId:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/chatId"
+                mailingId:
+                  $ref: "#/components/schemas/MailingID"
+                hours:
+                  type: integer
+                  description: Часы
+                minutes:
+                  type: integer
+                  description: Минуты
+              required:
+                - config
+                - botId
+                - chatId
+                - mailingId
+      responses:
+        202:
+          description: Обновление запланировано
+        403:
+          $ref: "#/components/responses/TokenError"
+        404:
+          description: Рассылка не найдена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Detail"
+        500:
+          $ref: "#/components/responses/UnknownError"
+
+  /plan-updates:
+    post:
+      operationId: planUpdates
+      summary: Запланировать обновление для всех
+      description: Запланировать обновление рассылки для всех клиентов.
+        Обновление придет через заданное количество минут и часов.
+        Если предоставлен список чатов, то обновление будет установлено только для предоставленных чатов.
+      tags:
+        - tomoru/call
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                config:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
+                botId:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/botId"
+                chats:
+                  type: string
+                  description: Список чатов
+                mailingId:
+                  $ref: "#/components/schemas/MailingID"
+                hours:
+                  type: integer
+                  description: Часы
+                minutes:
+                  type: integer
+                  description: Минуты
+              required:
+                - config
+                - botId
+                - chatId
+                - mailingId
+      responses:
+        202:
+          description: Обновление запланировано
+        403:
+          $ref: "#/components/responses/TokenError"
+        404:
+          description: Рассылка не найдена
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Detail"
+        500:
+          $ref: "#/components/responses/UnknownError"
+
   /schedule-update:
     post:
       operationId: scheduleUpdate
@@ -385,6 +480,8 @@ paths:
             schema:
               type: object
               properties:
+                config:
+                  $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
                 spreadsheetId:
                   type: string
                   description: Идентификатор таблицы
@@ -398,6 +495,7 @@ paths:
                   type: integer
                   description: Конец диапазона
               required:
+                - config
                 - spreadsheetId
                 - column
                 - rangeStart
