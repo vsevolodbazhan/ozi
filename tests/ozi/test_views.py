@@ -374,10 +374,12 @@ class TestPlanUpdate:
         )
 
         assert response.status_code == status.HTTP_202_ACCEPTED
-        assert Client.objects.count() == 1
+        assert Update.objects.count() == 1
 
 
 class TestScheduleUpdate:
+    CHATS_COUNT = 5
+
     @pytest.fixture
     def timestamp(self, faker):
         return faker.date_time()
@@ -387,11 +389,10 @@ class TestScheduleUpdate:
         return faker.pyint()
 
     @pytest.fixture
-    def data(self, _client, mailing, timestamp, repeat, config):
+    def common_data(self, _client, mailing, timestamp, repeat, config):
         return {
-            "mailingId": mailing.id,
-            "botId": _client.bot,
-            "chatId": _client.chat,
+            "mailing_id": mailing.id,
+            "bot_id": _client.bot,
             "time": timestamp.time(),
             "date": timestamp.date(),
             "repeat": repeat,
@@ -399,38 +400,151 @@ class TestScheduleUpdate:
         }
 
     @pytest.fixture
-    def url(self):
+    def for_client_data(self, _client, common_data):
+        common_data["chat_id"] = _client.chat
+        return common_data
+
+    @pytest.fixture
+    def for_all_data(self, common_data, faker):
+        chats = ", ".join(faker.pystr() for _ in range(self.CHATS_COUNT))
+        common_data["chats"] = chats
+        return common_data
+
+    @pytest.fixture
+    def for_client_url(self):
         return reverse("schedule-update-for-client")
 
-    def test_schedule_update_requires_authentication(self, client, url, data):
-        data.pop("config")
-        response = client.post(url, data, content_type="application/json")
+    @pytest.fixture
+    def for_all_url(self):
+        return reverse("schedule-update-for-all")
+
+    def test_schedule_update_for_client_requires_authentication(
+        self, client, for_client_url, for_client_data
+    ):
+        for_client_data.pop("config")
+        response = client.post(
+            for_client_url, for_client_data, content_type="application/json"
+        )
 
         assert response.status_code == status.HTTP_403_FORBIDDEN
 
-    def test_schedule_update_creates_update_without_time(self, client, url, data):
-        data.pop("time")
-        response = client.post(url, data, content_type="application/json")
+    def test_schedule_update_for_client_creates_update_without_time(
+        self, client, for_client_url, for_client_data
+    ):
+        for_client_data.pop("time")
+        response = client.post(
+            for_client_url, for_client_data, content_type="application/json"
+        )
 
         assert response.status_code == status.HTTP_202_ACCEPTED
         assert Update.objects.count() == 1
 
-    def test_schedule_update_creates_update_without_date(self, client, url, data):
-        data.pop("date")
-        response = client.post(url, data, content_type="application/json")
+    def test_schedule_update_for_client_creates_update_without_date(
+        self, client, for_client_url, for_client_data
+    ):
+        for_client_data.pop("date")
+        response = client.post(
+            for_client_url, for_client_data, content_type="application/json"
+        )
 
         assert response.status_code == status.HTTP_202_ACCEPTED
         assert Update.objects.count() == 1
 
-    def test_schedule_update_creates_update_without_repeat(self, client, url, data):
-        data.pop("repeat")
-        response = client.post(url, data, content_type="application/json")
+    def test_schedule_update_for_client_creates_update_without_repeat(
+        self, client, for_client_url, for_client_data
+    ):
+        for_client_data.pop("repeat")
+        response = client.post(
+            for_client_url, for_client_data, content_type="application/json"
+        )
 
         assert response.status_code == status.HTTP_202_ACCEPTED
         assert Update.objects.count() == 1
 
-    def test_schedule_update_creates_update(self, client, url, data):
-        response = client.post(url, data, content_type="application/json")
+    def test_schedule_update_for_client_creates_update(
+        self, client, for_client_url, for_client_data
+    ):
+        response = client.post(
+            for_client_url, for_client_data, content_type="application/json"
+        )
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Update.objects.count() == 1
+
+    def test_schedule_update_for_all_requires_authentication(
+        self, for_all_url, client, for_all_data
+    ):
+        for_all_data.pop("config")
+        response = client.post(
+            for_all_url, for_all_data, content_type="application/json"
+        )
+
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    def test_schedule_update_for_all_creates_update(
+        self, client, for_all_url, for_all_data
+    ):
+        response = client.post(
+            for_all_url, for_all_data, content_type="application/json"
+        )
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Update.objects.count() == self.CHATS_COUNT
+
+    def test_schedule_update_for_all_creates_update_without_time(
+        self, client, for_all_url, for_all_data
+    ):
+        for_all_data.pop("time")
+        response = client.post(
+            for_all_url, for_all_data, content_type="application/json"
+        )
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Update.objects.count() == self.CHATS_COUNT
+
+    def test_schedule_update_for_all_creates_update_without_date(
+        self, client, for_all_url, for_all_data
+    ):
+        for_all_data.pop("date")
+        response = client.post(
+            for_all_url, for_all_data, content_type="application/json"
+        )
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Update.objects.count() == self.CHATS_COUNT
+
+    def test_schedule_update_for_all_creates_update_without_repeat(
+        self, client, for_all_url, for_all_data
+    ):
+        for_all_data.pop("repeat")
+        response = client.post(
+            for_all_url, for_all_data, content_type="application/json"
+        )
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Update.objects.count() == self.CHATS_COUNT
+
+    def test_schedule_update_for_creates_clients(
+        self, client, for_all_url, for_all_data
+    ):
+        client_count = Client.objects.count()
+
+        response = client.post(
+            for_all_url, for_all_data, content_type="application/json"
+        )
+
+        assert response.status_code == status.HTTP_202_ACCEPTED
+        assert Client.objects.count() == self.CHATS_COUNT + client_count
+
+    def test_schedule_update_for_all_creates_update_without_chats(
+        self, client, for_all_url, for_all_data, _client, mailing
+    ):
+        _client.subscriptions.add(mailing)
+
+        for_all_data.pop("chats")
+        response = client.post(
+            for_all_url, for_all_data, content_type="application/json"
+        )
 
         assert response.status_code == status.HTTP_202_ACCEPTED
         assert Update.objects.count() == 1
