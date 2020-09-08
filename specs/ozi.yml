@@ -3,7 +3,7 @@ openapi: 3.0.3
 info:
   title: Рассылки
   version: 0.3.1
-  description: Микросервис для управление рассылками.
+  description: Микросервис для управления рассылками.
   x-config:
     schema:
       type: object
