@@ -1,9 +1,9 @@
 openapi: 3.0.3
 
 info:
-  title: Ozi
+  title: Рассылки
   version: 0.3.1
-  description: Управление рассылками.
+  description: Микросервис для управление рассылками.
   x-config:
     schema:
       type: object
