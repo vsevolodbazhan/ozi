@@ -62,4 +62,4 @@ Note that for the build to be successful it has to have no `flake8` errors and h
 
 ## License
 
-[MIT](https://github.com/vsevolodbazhan/posel/blob/master/LICENSE)
+[GNU GPLv3](https://github.com/vsevolodbazhan/posel/blob/master/COPYING)
