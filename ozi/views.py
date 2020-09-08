@@ -8,11 +8,10 @@ from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.response import Response
 
-from sheets import extract_values
-
 from . import exceptions
 from .constants import NUMBER_OF_SECONDS_IN_MINUTE
 from .models import Client, Hook, Mailing
+from .sheets import extract_values
 from .tasks import send_event
 from .utilities import stringify
 

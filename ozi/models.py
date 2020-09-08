@@ -6,8 +6,7 @@ from django.db import models
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
-from comparator import distance_is_acceptable, levenshtein_distance, normalize
-
+from .comparator import distance_is_acceptable, levenshtein_distance, normalize
 from .constants import NUMBER_OF_SECONDS_IN_MINUTE
 from .utilities import retrieve_task_parameters
 

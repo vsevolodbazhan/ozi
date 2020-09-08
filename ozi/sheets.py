@@ -1,25 +1,24 @@
+__all__ = ["setup_service", "extract_values"]
+
 import json
-import os
 
 import apiclient.discovery
 import httplib2
+from django.conf import settings
 from oauth2client.service_account import ServiceAccountCredentials
 
-CREDENTIALS_FILE = "creds.json"
-CREDENTIALS_VARIABLE_NAME = "SHEETS_API_CREDS"
 
-
-def setup_service(credentials_file=CREDENTIALS_FILE):
+def setup_service():
     apis_list = [
         "https://www.googleapis.com/auth/spreadsheets",
         "https://www.googleapis.com/auth/drive",
     ]
     try:
         credentials = ServiceAccountCredentials.from_json_keyfile_name(
-            credentials_file, apis_list
+            settings.SHEETS_CREDENTIALS_FILE, apis_list
         )
     except FileNotFoundError:
-        credentials_data = json.loads(os.environ[CREDENTIALS_VARIABLE_NAME])
+        credentials_data = json.loads(settings.SHEETS_CREDENTIALS_JSON)
         credentials = ServiceAccountCredentials.from_json_keyfile_dict(
             credentials_data, apis_list
         )

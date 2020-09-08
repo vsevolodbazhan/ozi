@@ -46,7 +46,21 @@ INSTALLED_APPS = [
     "ozi",
 ]
 
+# Tasks settings
+
 BACKGROUND_TASK_RUN_ASYNC = True
+
+
+# Google Sheets API settings
+
+SHEETS_CREDENTIALS_FILE = "creds.json"
+SHEETS_CREDENTIALS_JSON = os.environ.get("SHEETS_CREDENTIALS_JSON")
+
+
+# Comparator settings
+
+ACCEPTED_LEVENSHTEIN_DISTANCE_THRESHOLD = 2
+
 
 AUTH_USER_MODEL = "accounts.User"
 

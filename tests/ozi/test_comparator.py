@@ -1,4 +1,4 @@
-from comparator import (
+from ozi.comparator import (
     normalize,
     distance_is_acceptable as is_acceptable,
     levenshtein_distance as distance,
