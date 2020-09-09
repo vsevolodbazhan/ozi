@@ -1,6 +1,7 @@
-from django.contrib.auth import get_user_model
 from rest_framework import mixins, viewsets
 from rest_framework.permissions import IsAdminUser
+
+from config.utilities import get_user_model
 
 from ..models import Client, Mailing, Update
 from ..serializers import (
@@ -18,8 +19,7 @@ class CreateWithUserMixin:
         serializer.save(user=self.request.user)
 
 
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+class UserViewSet(mixins.CreateModelMixin, viewsets.GenericViewSet):
     serializer_class = UserSerializer
     permission_classes = [IsAdminUser]
 

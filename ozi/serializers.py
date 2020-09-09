@@ -1,14 +1,16 @@
 from datetime import datetime
 
-from django.contrib.auth import get_user_model
 from django.utils import timezone
 from rest_framework import serializers
+
+from config.utilities import get_token_model, get_user_model
 
 from .constants import NUMBER_OF_SECONDS_IN_MINUTE
 from .models import Client, Mailing, Update
 from .tasks import send_event
 
 User = get_user_model()
+Token = get_token_model()
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -26,6 +28,14 @@ class UserSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["date_joined"]
         extra_kwargs = {"password": {"write_only": True}}
+
+    def to_representation(self, instance):
+        representation = super(UserSerializer, self).to_representation(instance)
+
+        token = Token.objects.get(user=instance)
+        representation["token"] = str(token)
+
+        return representation
 
 
 class ClientSerializer(serializers.ModelSerializer):
