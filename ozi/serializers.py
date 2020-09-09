@@ -68,12 +68,11 @@ class UpdateSerializer(serializers.ModelSerializer):
         return data
 
     def create(self, data):
-        task_parameters = {
-            "user_id": str(data["user"].id),
-            "mailing_id": str(data["mailing"].id),
-            "client_id": str(data["client"].id),
-            "schedule": data["schedule"],
-            "repeat": data["repeat"] * NUMBER_OF_SECONDS_IN_MINUTE,
-        }
-        task = send_event(**task_parameters)
+        task = send_event(
+            user_id=str(data["user"].id),
+            mailing_id=str(data["mailing"].id),
+            client_id=str(data["client"].id),
+            schedule=data["schedule"],
+            repeat=data["repeat"] * NUMBER_OF_SECONDS_IN_MINUTE,
+        )
         return Update.objects.get(task=task)
