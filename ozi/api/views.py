@@ -1,11 +1,21 @@
 from django.contrib.auth import get_user_model
-from rest_framework import viewsets
+from rest_framework import mixins, viewsets
 from rest_framework.permissions import IsAdminUser
 
-from ..models import Client, Mailing
-from ..serializers import ClientSerializer, MailingSerializer, UserSerializer
+from ..models import Client, Mailing, Update
+from ..serializers import (
+    ClientSerializer,
+    MailingSerializer,
+    UpdateSerializer,
+    UserSerializer,
+)
 
 User = get_user_model()
+
+
+class CreateWithUserMixin:
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -23,9 +33,22 @@ class ClientViewSet(viewsets.ModelViewSet):
         return Client.objects.get_subscribed(mailings)
 
 
-class MailingViewSet(viewsets.ModelViewSet):
+class MailingViewSet(CreateWithUserMixin, viewsets.ModelViewSet):
     serializer_class = MailingSerializer
 
     def get_queryset(self):
         user = self.request.user
         return Mailing.objects.filter(user=user)
+
+
+class UpdateViewSet(
+    CreateWithUserMixin,
+    mixins.CreateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet,
+):
+    serializer_class = UpdateSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return Update.objects.filter(user=user)
