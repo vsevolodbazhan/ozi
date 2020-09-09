@@ -16,6 +16,6 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
-from ozi import urls as api_urls
+from ozi import urls as ozi_urls
 
-urlpatterns = [path("admin/", admin.site.urls), path("api/", include(api_urls))]
+urlpatterns = [path("admin/", admin.site.urls), path("", include(ozi_urls))]
