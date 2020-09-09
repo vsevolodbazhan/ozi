@@ -1,4 +1,7 @@
+from datetime import timedelta
+
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from rest_framework import serializers
 
 from .models import Client, Mailing
@@ -38,3 +41,22 @@ class MailingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mailing
         fields = ["id", "user_id", "name", "common"]
+
+
+def almost_now(offset_in_seconds=5):
+    return timezone.now() + timedelta(seconds=offset_in_seconds)
+
+
+class UpdateSerializer(serializers.Serializer):
+    mailing_id = serializers.UUIDField()
+    client_id = serializers.UUIDField()
+    schedule = serializers.DateTimeField(required=False, default=almost_now())
+    repeat = serializers.IntegerField(min_value=0, required=False, default=0)
+
+    def validate_schedule(self, value):
+        if value < timezone.now():
+            raise serializers.ValidationError(
+                "Can not schedule an update earlier than now."
+            )
+
+        return value
