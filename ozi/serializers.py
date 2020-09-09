@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from .models import Mailing
+from .models import Client, Mailing
 
 User = get_user_model()
 
@@ -21,6 +21,15 @@ class UserSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ["date_joined"]
         extra_kwargs = {"password": {"write_only": True}}
+
+
+class ClientSerializer(serializers.ModelSerializer):
+    bot_id = serializers.CharField(source="bot")
+    chat_id = serializers.CharField(source="chat")
+
+    class Meta:
+        model = Client
+        fields = ["id", "bot_id", "chat_id", "subscriptions"]
 
 
 class MailingSerializer(serializers.ModelSerializer):

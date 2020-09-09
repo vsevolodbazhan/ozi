@@ -118,7 +118,7 @@ def update_for_all(request, callback):
             client.subscriptions.add(mailing)
             clients.append(client)
     else:
-        clients = Client.objects.get_subscribed(mailing)
+        clients = Client.objects.get_subscribed([mailing])
 
     return callback(user, mailing, clients, parameters=request.data)
 

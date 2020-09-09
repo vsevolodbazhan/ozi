@@ -109,7 +109,7 @@ class TestClient:
         client_1.subscriptions.add(mailing_2)
         client_2.subscriptions.add(mailing_1)
 
-        clients = Client.objects.get_subscribed(mailing_1)
+        clients = Client.objects.get_subscribed([mailing_1])
 
         assert clients.count() == 2
         assert clients.filter(id=client_1.id).exists()

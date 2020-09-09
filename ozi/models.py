@@ -46,8 +46,7 @@ class Mailing(models.Model):
 
 
 class ClientManager(models.Manager):
-    def get_subscribed(self, mailing):
-        mailings = [mailing]
+    def get_subscribed(self, mailings):
         return self.filter(subscriptions__in=mailings).distinct()
 
 
