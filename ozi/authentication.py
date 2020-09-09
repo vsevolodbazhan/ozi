@@ -2,6 +2,10 @@ from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication
 
 
+class BearerAuthentication(TokenAuthentication):
+    keyword = "Bearer"
+
+
 class ConfigAuthentication(TokenAuthentication):
     def authenticate(self, request):
         config = request.data.get("config")
