@@ -41,7 +41,8 @@ operation_patterns = [
 ]
 
 router = routers.SimpleRouter(trailing_slash=False)
-router.register(r"users", sets.UserViewSet)
+router.register(r"users", sets.UserViewSet, basename="user")
+router.register(r"mailings", sets.MailingViewSet, basename="mailing")
 
 urlpatterns = [
     path("", include(router.urls)),
