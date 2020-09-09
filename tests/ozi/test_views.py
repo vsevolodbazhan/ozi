@@ -62,7 +62,7 @@ class TestListSubscriptions:
 
     @pytest.fixture
     def url(self):
-        return reverse("list-subscriptions")
+        return reverse("list-client-subscriptions")
 
     def test_list_subscriptions_with_no_subscriptions(self, client, url, data):
         response = client.post(url, data, content_type="application/json")

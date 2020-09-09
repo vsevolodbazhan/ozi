@@ -1,39 +1,49 @@
-from django.urls import path
+from django.urls import include, path
+from rest_framework import routers
 
-from . import views
+from .views import operations as ops
+from .views import sets
 
-urlpatterns = [
-    path("mailings", views.list_mailings, name="list-mailings"),
+operation_patterns = [
+    path("create-hook", ops.create_hook, name="create-hook"),
+    path(
+        "extract-chats", ops.extract_chats_from_sheet, name="extract-chats-from-sheet"
+    ),
+    path("find-mailing", ops.find_mailing, name="find-mailing"),
     path(
         "subscriptions",
-        views.list_client_subscriptions,
-        name="list-subscriptions",
+        ops.list_client_subscriptions,
+        name="list-client-subscriptions",
     ),
-    path("create-hook", views.create_hook, name="create-hook"),
-    path("subscribe", views.subscribe_client, name="subscribe-client"),
-    path("unsubscribe", views.unsubscribe_client, name="unsubscribe-client"),
-    path("find-mailing", views.find_mailing, name="find-mailing"),
-    path(
-        "plan-update",
-        views.plan_update_for_client,
-        name="plan-update-for-client",
-    ),
+    path("mailings", ops.list_mailings, name="list-mailings"),
     path(
         "plan-updates",
-        views.plan_update_for_all,
+        ops.plan_update_for_all,
         name="plan-update-for-all",
     ),
     path(
-        "schedule-update",
-        views.schedule_update_for_client,
-        name="schedule-update-for-client",
+        "plan-update",
+        ops.plan_update_for_client,
+        name="plan-update-for-client",
     ),
     path(
         "schedule-updates",
-        views.schedule_update_for_all,
+        ops.schedule_update_for_all,
         name="schedule-update-for-all",
     ),
     path(
-        "extract-chats", views.extract_chats_from_sheet, name="extract-chats-from-sheet"
+        "schedule-update",
+        ops.schedule_update_for_client,
+        name="schedule-update-for-client",
     ),
+    path("subscribe", ops.subscribe_client, name="subscribe-client"),
+    path("unsubscribe", ops.unsubscribe_client, name="unsubscribe-client"),
+]
+
+router = routers.SimpleRouter(trailing_slash=False)
+router.register(r"users", sets.UserViewSet)
+
+urlpatterns = [
+    path("", include(router.urls)),
+    path("operations/", include(operation_patterns)),
 ]
