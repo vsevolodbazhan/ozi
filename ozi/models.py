@@ -54,7 +54,7 @@ class Client(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     bot = models.CharField(max_length=50)
     chat = models.CharField(max_length=50)
-    subscriptions = models.ManyToManyField(Mailing)
+    subscriptions = models.ManyToManyField(Mailing, blank=True)
 
     objects = ClientManager()
 
