@@ -164,6 +164,14 @@ six = ">=1.10.0"
 
 [[package]]
 category = "main"
+description = "Extensions for Django"
+name = "django-extensions"
+optional = false
+python-versions = ">=3.5"
+version = "3.0.8"
+
+[[package]]
+category = "main"
 description = "This is a Django library for Heroku apps."
 name = "django-heroku"
 optional = false
@@ -699,7 +707,7 @@ version = "5.2.0"
 brotli = ["brotli"]
 
 [metadata]
-content-hash = "dd9f0cf9e8a38ed364bbb4159b131840f814691d54c39b1c1d3be7461fbd7407"
+content-hash = "1edf279d666ddbda01ff0f34db25db12679db9517f470f1f22150a2fa73c4525"
 python-versions = "^3.8"
 
 [metadata.files]
@@ -792,6 +800,10 @@ django-background-tasks = [
 ]
 django-compat = [
     {file = "django-compat-1.0.15.tar.gz", hash = "sha256:3ac9a3bedc56b9365d9eb241bc5157d0c193769bf995f9a78dc1bc24e7c2331b"},
+]
+django-extensions = [
+    {file = "django-extensions-3.0.8.tar.gz", hash = "sha256:a67747508ec39583892fbddf57e0b66b3f332a885ef5520698bc2e1cb351955a"},
+    {file = "django_extensions-3.0.8-py3-none-any.whl", hash = "sha256:c7c2ca48ccc2ecc4427c908cd3a6dc114fc7534092de51209b02f84ccafe648b"},
 ]
 django-heroku = [
     {file = "django-heroku-0.3.1.tar.gz", hash = "sha256:6af4bc3ae4a9b55eaad6dbe5164918982d2762661aebc9f83d9fa49f6009514e"},
