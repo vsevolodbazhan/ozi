@@ -55,7 +55,17 @@ paths:
                   required:
                     - bot
                     - chat
-          description: ""
+          description: "Clients have been retrieved successfully."
+        "401":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  detail:
+                    type: string
+                    example: "Authentication credentials were not provided."
+          description: An authentication error has occurred.
 
     post:
       operationId: createClient
