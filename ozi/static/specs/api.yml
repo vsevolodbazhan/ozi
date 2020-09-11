@@ -10,6 +10,18 @@ components:
       type: http
       scheme: bearer
 
+  responses:
+    Unauthorized:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: "Authentication credentials were not provided."
+      description: An authentication error has occurred.
+
 security:
   - BearerAuth: []
 
@@ -57,19 +69,12 @@ paths:
                     - chat
           description: "Clients have been retrieved successfully."
         "401":
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  detail:
-                    type: string
-                    example: "Authentication credentials were not provided."
-          description: An authentication error has occurred.
+          $ref: "#/components/responses/Unauthorized"
 
     post:
       operationId: createClient
-      description: ""
+      description: "Creates a new client."
+      summary: "Create a client."
       tags:
         - Clients
       parameters: []
@@ -81,13 +86,21 @@ paths:
                 bot:
                   type: string
                   maxLength: 50
+                  example: "IRCpuc1mcsEMu9QkndPa"
                 chat:
                   type: string
                   maxLength: 50
+                  example: "j719AM0A7a6z041Pj24S-123455678"
                 subscriptions:
                   type: array
                   items:
                     type: string
+                  example:
+                    [
+                      "ef6c08ea-460e-4fe2-aa95-c53ddbe4ad8b",
+                      "ca3ac034-0d28-4cf3-8401-b752ee7efc0c",
+                      "abc79eef-9aa0-45e9-bbc9-a2c22942fd19",
+                    ]
               required:
                 - bot
                 - chat
@@ -114,7 +127,9 @@ paths:
                 required:
                   - bot
                   - chat
-          description: ""
+          description: "The client has been created successfully."
+        "401":
+          $ref: "#/components/responses/Unauthorized"
 
   /api/clients/{id}:
     get:
