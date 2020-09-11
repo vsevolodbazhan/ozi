@@ -44,6 +44,8 @@ class MailingViewSet(CreateWithUserMixin, viewsets.ModelViewSet):
 class UpdateViewSet(
     CreateWithUserMixin,
     mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    mixins.DestroyModelMixin,
     mixins.ListModelMixin,
     viewsets.GenericViewSet,
 ):
