@@ -1,0 +1,663 @@
+openapi: 3.0.2
+info:
+  title: "Mailings"
+  description: "Mailing management microservice API."
+  version: "0.4.0"
+
+paths:
+  /api/clients:
+    get:
+      operationId: listClients
+      description: ""
+      tags:
+        - Clients
+      parameters: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                      readOnly: true
+                    bot:
+                      type: string
+                      maxLength: 50
+                    chat:
+                      type: string
+                      maxLength: 50
+                    subscriptions:
+                      type: array
+                      items:
+                        type: string
+                  required:
+                    - bot
+                    - chat
+          description: ""
+
+    post:
+      operationId: createClient
+      description: ""
+      tags:
+        - Clients
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                bot:
+                  type: string
+                  maxLength: 50
+                chat:
+                  type: string
+                  maxLength: 50
+                subscriptions:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - bot
+                - chat
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    readOnly: true
+                  bot:
+                    type: string
+                    maxLength: 50
+                  chat:
+                    type: string
+                    maxLength: 50
+                  subscriptions:
+                    type: array
+                    items:
+                      type: string
+                required:
+                  - bot
+                  - chat
+          description: ""
+
+  /api/clients/{id}:
+    get:
+      operationId: retrieveClient
+      description: ""
+      tags:
+        - Clients
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ""
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    readOnly: true
+                  bot:
+                    type: string
+                    maxLength: 50
+                  chat:
+                    type: string
+                    maxLength: 50
+                  subscriptions:
+                    type: array
+                    items:
+                      type: string
+                required:
+                  - bot
+                  - chat
+          description: ""
+
+    put:
+      operationId: updateClient
+      description: ""
+      tags:
+        - Clients
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ""
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                bot:
+                  type: string
+                  maxLength: 50
+                chat:
+                  type: string
+                  maxLength: 50
+                subscriptions:
+                  type: array
+                  items:
+                    type: string
+              required:
+                - bot
+                - chat
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    readOnly: true
+                  bot:
+                    type: string
+                    maxLength: 50
+                  chat:
+                    type: string
+                    maxLength: 50
+                  subscriptions:
+                    type: array
+                    items:
+                      type: string
+                required:
+                  - bot
+                  - chat
+          description: ""
+
+    patch:
+      operationId: partial_updateClient
+      description: ""
+      tags:
+        - Clients
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ""
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                bot:
+                  type: string
+                  maxLength: 50
+                chat:
+                  type: string
+                  maxLength: 50
+                subscriptions:
+                  type: array
+                  items:
+                    type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    readOnly: true
+                  bot:
+                    type: string
+                    maxLength: 50
+                  chat:
+                    type: string
+                    maxLength: 50
+                  subscriptions:
+                    type: array
+                    items:
+                      type: string
+                required:
+                  - bot
+                  - chat
+          description: ""
+
+    delete:
+      operationId: destroyClient
+      description: ""
+      tags:
+        - Clients
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ""
+          schema:
+            type: string
+      responses:
+        "204":
+          description: ""
+
+  /api/mailings:
+    get:
+      operationId: listMailings
+      description: ""
+      tags:
+        - Mailings
+      parameters: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                      readOnly: true
+                    name:
+                      type: string
+                      maxLength: 50
+                    common:
+                      type: boolean
+                  required:
+                    - name
+          description: ""
+
+    post:
+      operationId: createMailing
+      description: ""
+      tags:
+        - Mailings
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                  maxLength: 50
+                common:
+                  type: boolean
+              required:
+                - name
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 50
+                  common:
+                    type: boolean
+                required:
+                  - name
+          description: ""
+
+  /api/mailings/{id}:
+    get:
+      operationId: retrieveMailing
+      description: ""
+      tags:
+        - Mailings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ""
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 50
+                  common:
+                    type: boolean
+                required:
+                  - name
+          description: ""
+
+    put:
+      operationId: updateMailing
+      description: ""
+      tags:
+        - Mailings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ""
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                  maxLength: 50
+                common:
+                  type: boolean
+              required:
+                - name
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 50
+                  common:
+                    type: boolean
+                required:
+                  - name
+          description: ""
+
+    patch:
+      operationId: partial_updateMailing
+      description: ""
+      tags:
+        - Mailings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ""
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                name:
+                  type: string
+                  maxLength: 50
+                common:
+                  type: boolean
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    readOnly: true
+                  name:
+                    type: string
+                    maxLength: 50
+                  common:
+                    type: boolean
+                required:
+                  - name
+          description: ""
+
+    delete:
+      operationId: destroyMailing
+      description: ""
+      tags:
+        - Mailings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ""
+          schema:
+            type: string
+      responses:
+        "204":
+          description: ""
+
+  /api/updates:
+    get:
+      operationId: listUpdates
+      description: ""
+      tags:
+        - Updates
+      parameters: []
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  properties:
+                    id:
+                      type: string
+                      format: uuid
+                      readOnly: true
+                    mailing:
+                      type: string
+                    client:
+                      type: string
+                      nullable: true
+                    time:
+                      type: string
+                    date:
+                      type: string
+                      format: date
+                    repeat:
+                      type: integer
+                      nullable: true
+                  required:
+                    - mailing
+                    - time
+                    - date
+          description: ""
+
+    post:
+      operationId: createUpdate
+      description: ""
+      tags:
+        - Updates
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                mailing:
+                  type: string
+                client:
+                  type: string
+                  nullable: true
+                time:
+                  type: string
+                date:
+                  type: string
+                  format: date
+                repeat:
+                  type: integer
+                  nullable: true
+              required:
+                - mailing
+                - time
+                - date
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    readOnly: true
+                  mailing:
+                    type: string
+                  client:
+                    type: string
+                    nullable: true
+                  time:
+                    type: string
+                  date:
+                    type: string
+                    format: date
+                  repeat:
+                    type: integer
+                    nullable: true
+                required:
+                  - mailing
+                  - time
+                  - date
+          description: ""
+
+  /api/updates/{id}:
+    get:
+      operationId: retrieveUpdate
+      description: ""
+      tags:
+        - Updates
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ""
+          schema:
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    readOnly: true
+                  mailing:
+                    type: string
+                  client:
+                    type: string
+                    nullable: true
+                  time:
+                    type: string
+                  date:
+                    type: string
+                    format: date
+                  repeat:
+                    type: integer
+                    nullable: true
+                required:
+                  - mailing
+                  - time
+                  - date
+          description: ""
+
+    delete:
+      operationId: destroyUpdate
+      description: ""
+      tags:
+        - Updates
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ""
+          schema:
+            type: string
+      responses:
+        "204":
+          description: ""
+
+  /api/users:
+    post:
+      operationId: createUser
+      description: ""
+      tags:
+        - Users
+      parameters: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  type: string
+                  format: email
+                  maxLength: 254
+                first_name:
+                  type: string
+                  maxLength: 30
+                last_name:
+                  type: string
+                  maxLength: 30
+                password:
+                  type: string
+                  writeOnly: true
+                  maxLength: 128
+              required:
+                - email
+                - password
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    readOnly: true
+                  email:
+                    type: string
+                    format: email
+                    maxLength: 254
+                  first_name:
+                    type: string
+                    maxLength: 30
+                  last_name:
+                    type: string
+                    maxLength: 30
+                  date_joined:
+                    type: string
+                    format: date-time
+                    readOnly: true
+                  is_active:
+                    type: boolean
+                    readOnly: true
+                  is_staff:
+                    type: boolean
+                    readOnly: true
+                required:
+                  - email
+          description: ""
