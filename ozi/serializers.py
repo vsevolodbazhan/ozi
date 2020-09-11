@@ -26,7 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
             "is_staff",
             "password",
         ]
-        read_only_fields = ["date_joined"]
+        read_only_fields = ["date_joined", "is_active", "is_staff"]
         extra_kwargs = {"password": {"write_only": True}}
 
     def to_representation(self, instance):
