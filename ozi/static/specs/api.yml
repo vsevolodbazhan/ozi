@@ -105,7 +105,7 @@ paths:
                 - bot
                 - chat
       responses:
-        "200":
+        "201":
           content:
             application/json:
               schema:
@@ -128,6 +128,46 @@ paths:
                   - bot
                   - chat
           description: "The client has been created successfully."
+        "400":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bot:
+                    type: array
+                    items:
+                      type: string
+                  chat:
+                    type: array
+                    items:
+                      type: string
+                  subscriptions:
+                    type: array
+                    items:
+                      type: string
+                  nonFieldErrors:
+                    type: array
+                    items:
+                      type: string
+              examples:
+                "Empty Field":
+                  value:
+                    bot: ["This field can not be blank."]
+                "Null Field":
+                  value:
+                    chat: ["This field can not be null."]
+                "Non-existent ID":
+                  value:
+                    subscriptions:
+                      [
+                        'Invalid pk "ef6c08ea-460e-4fe2-aa95-c53ddbe4ad8b" - object does not exist.',
+                      ]
+                "Unique Constraint Violation":
+                  value:
+                    nonFieldErrors:
+                      ["The fields bot, chat must make a unique set."]
+          description: "The request is malformed."
         "401":
           $ref: "#/components/responses/Unauthorized"
 
