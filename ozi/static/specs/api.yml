@@ -20,7 +20,17 @@ components:
               detail:
                 type: string
                 example: "Authentication credentials were not provided."
-      description: An authentication error has occurred.
+      description: "An authentication error has occurred."
+    NotFound:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              detail:
+                type: string
+                example: "Not found."
+      description: "The requested resource does not exist."
 
 security:
   - BearerAuth: []
@@ -127,6 +137,18 @@ paths:
                 required:
                   - bot
                   - chat
+              examples:
+                "New Client":
+                  value:
+                    id: "18629c5c-7b28-4e3f-8373-9fb4310d0a3c"
+                    bot: "IRCpuc1mcsEMu9QkndPa"
+                    chat: "j719AM0A7a6z041Pj24S-123455678"
+                    subscriptions:
+                      [
+                        "ef6c08ea-460e-4fe2-aa95-c53ddbe4ad8b",
+                        "ca3ac034-0d28-4cf3-8401-b752ee7efc0c",
+                        "abc79eef-9aa0-45e9-bbc9-a2c22942fd19",
+                      ]
           description: "The client has been created successfully."
         "400":
           content:
@@ -174,16 +196,19 @@ paths:
   /api/clients/{id}:
     get:
       operationId: retrieveClient
-      description: ""
+      description: "Retrieve an existing client by ID."
+      summary: "Retrieve a client."
       tags:
         - Clients
       parameters:
         - name: id
           in: path
           required: true
-          description: ""
+          description: "Client ID."
           schema:
             type: string
+            format: uuid
+            example: "18629c5c-7b28-4e3f-8373-9fb4310d0a3c"
       responses:
         "200":
           content:
@@ -207,7 +232,23 @@ paths:
                 required:
                   - bot
                   - chat
-          description: ""
+              examples:
+                "New Client":
+                  value:
+                    id: "18629c5c-7b28-4e3f-8373-9fb4310d0a3c"
+                    bot: "IRCpuc1mcsEMu9QkndPa"
+                    chat: "j719AM0A7a6z041Pj24S-123455678"
+                    subscriptions:
+                      [
+                        "ef6c08ea-460e-4fe2-aa95-c53ddbe4ad8b",
+                        "ca3ac034-0d28-4cf3-8401-b752ee7efc0c",
+                        "abc79eef-9aa0-45e9-bbc9-a2c22942fd19",
+                      ]
+          description: "The client has been retrieved successfully."
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
     put:
       operationId: updateClient
