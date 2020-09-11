@@ -107,7 +107,7 @@ REST_FRAMEWORK = {
     ),
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "ozi.authentication.BearerAuthentication",
-        "ozi.authentication.ConfigAuthentication",
+        # "ozi.authentication.ConfigAuthentication",
     ),
 }
 
