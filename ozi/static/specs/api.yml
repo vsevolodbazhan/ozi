@@ -4,11 +4,21 @@ info:
   description: "Mailing management microservice API."
   version: "0.4.0"
 
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+
+security:
+  - BearerAuth: []
+
 paths:
   /api/clients:
     get:
       operationId: listClients
-      description: ""
+      description: "Lists all clients that are subscribed to a least one user mailing."
+      summary: "List clients."
       tags:
         - Clients
       parameters: []
@@ -27,13 +37,21 @@ paths:
                     bot:
                       type: string
                       maxLength: 50
+                      example: "IRCpuc1mcsEMu9QkndPa"
                     chat:
                       type: string
                       maxLength: 50
+                      example: "j719AM0A7a6z041Pj24S-123455678"
                     subscriptions:
                       type: array
                       items:
                         type: string
+                      example:
+                        [
+                          "ef6c08ea-460e-4fe2-aa95-c53ddbe4ad8b",
+                          "ca3ac034-0d28-4cf3-8401-b752ee7efc0c",
+                          "abc79eef-9aa0-45e9-bbc9-a2c22942fd19",
+                        ]
                   required:
                     - bot
                     - chat
