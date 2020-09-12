@@ -1,4 +1,5 @@
 openapi: 3.0.2
+
 info:
   title: "Mailings"
   description: "Mailing management microservice API."
@@ -63,7 +64,7 @@ paths:
                     chat:
                       type: string
                       maxLength: 50
-                      example: "j719AM0A7a6z041Pj24S-123455678"
+                      example: "j719AM0A7a6z041Pj24S-123456789"
                     subscriptions:
                       type: array
                       items:
@@ -100,7 +101,7 @@ paths:
                 chat:
                   type: string
                   maxLength: 50
-                  example: "j719AM0A7a6z041Pj24S-123455678"
+                  example: "j719AM0A7a6z041Pj24S-123456789"
                 subscriptions:
                   type: array
                   items:
@@ -142,7 +143,7 @@ paths:
                   value:
                     id: "18629c5c-7b28-4e3f-8373-9fb4310d0a3c"
                     bot: "IRCpuc1mcsEMu9QkndPa"
-                    chat: "j719AM0A7a6z041Pj24S-123455678"
+                    chat: "j719AM0A7a6z041Pj24S-123456789"
                     subscriptions:
                       [
                         "ef6c08ea-460e-4fe2-aa95-c53ddbe4ad8b",
@@ -179,6 +180,9 @@ paths:
                 "Null Field":
                   value:
                     chat: ["This field can not be null."]
+                "Too Many Characters":
+                  value:
+                    bot: ["Ensure this field has no more than 50 characters."]
                 "Non-existent ID":
                   value:
                     subscriptions:
@@ -196,7 +200,7 @@ paths:
   /api/clients/{id}:
     get:
       operationId: retrieveClient
-      description: "Retrieve an existing client by ID."
+      description: "Retrieves an existing client by ID."
       summary: "Retrieve a client."
       tags:
         - Clients
@@ -237,7 +241,7 @@ paths:
                   value:
                     id: "18629c5c-7b28-4e3f-8373-9fb4310d0a3c"
                     bot: "IRCpuc1mcsEMu9QkndPa"
-                    chat: "j719AM0A7a6z041Pj24S-123455678"
+                    chat: "j719AM0A7a6z041Pj24S-123456789"
                     subscriptions:
                       [
                         "ef6c08ea-460e-4fe2-aa95-c53ddbe4ad8b",
@@ -252,16 +256,19 @@ paths:
 
     put:
       operationId: updateClient
-      description: ""
+      description: "Replaces existing client data. The client is being retrieved by an ID."
+      summary: "Replace client data."
       tags:
         - Clients
       parameters:
         - name: id
           in: path
           required: true
-          description: ""
+          description: "Client ID."
           schema:
             type: string
+            format: uuid
+            example: "18629c5c-7b28-4e3f-8373-9fb4310d0a3c"
       requestBody:
         content:
           application/json:
@@ -270,13 +277,21 @@ paths:
                 bot:
                   type: string
                   maxLength: 50
+                  example: "uaumpME1IcP9RQsdnCck"
                 chat:
                   type: string
                   maxLength: 50
+                  example: "aA64Az0j7P071j19M42S-123456789"
                 subscriptions:
                   type: array
                   items:
                     type: string
+                  example:
+                    [
+                      "cb73f749-92c6-41d4-92c7-429946a37556",
+                      "609c700d-8fd1-48d1-a9be-fb762a7d91ef",
+                      "2370d17a-62a7-40fb-a338-6584e2f4b486",
+                    ]
               required:
                 - bot
                 - chat
@@ -290,20 +305,76 @@ paths:
                     type: string
                     format: uuid
                     readOnly: true
+                    example: "18629c5c-7b28-4e3f-8373-9fb4310d0a3c"
                   bot:
                     type: string
                     maxLength: 50
+                    example: "uaumpME1IcP9RQsdnCck"
                   chat:
                     type: string
                     maxLength: 50
+                    example: "aA64Az0j7P071j19M42S-123456789"
                   subscriptions:
                     type: array
                     items:
                       type: string
+                    example:
+                      [
+                        "cb73f749-92c6-41d4-92c7-429946a37556",
+                        "609c700d-8fd1-48d1-a9be-fb762a7d91ef",
+                        "2370d17a-62a7-40fb-a338-6584e2f4b486",
+                      ]
                 required:
                   - bot
                   - chat
-          description: ""
+          description: "The client data have been updated successfully."
+        "400":
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bot:
+                    type: array
+                    items:
+                      type: string
+                  chat:
+                    type: array
+                    items:
+                      type: string
+                  subscriptions:
+                    type: array
+                    items:
+                      type: string
+                  nonFieldErrors:
+                    type: array
+                    items:
+                      type: string
+              examples:
+                "Empty Field":
+                  value:
+                    bot: ["This field can not be blank."]
+                "Null Field":
+                  value:
+                    chat: ["This field can not be null."]
+                "Too Many Characters":
+                  value:
+                    bot: ["Ensure this field has no more than 50 characters."]
+                "Non-existent ID":
+                  value:
+                    subscriptions:
+                      [
+                        'Invalid pk "609c700d-8fd1-48d1-a9be-fb762a7d91ef" - object does not exist.',
+                      ]
+                "Unique Constraint Violation":
+                  value:
+                    nonFieldErrors:
+                      ["The fields bot, chat must make a unique set."]
+          description: "The request is malformed."
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
 
     patch:
       operationId: partial_updateClient
