@@ -39,9 +39,21 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ClientSerializer(serializers.ModelSerializer):
+    MAXIMUM_NUMBER_OF_SUBSCRIPTIONS_IN_PAYLOAD = 100
+
     class Meta:
         model = Client
         fields = ["id", "bot", "chat", "subscriptions"]
+
+    def validate_subscriptions(self, value):
+        limit = self.MAXIMUM_NUMBER_OF_SUBSCRIPTIONS_IN_PAYLOAD
+
+        if len(value) > limit:
+            raise serializers.ValidationError(
+                f"The number of provided subscriptions exceeds the limit of {limit} items."
+            )
+
+        return super(ClientSerializer, self).validate_subscriptions(self, value)
 
 
 class MailingSerializer(serializers.ModelSerializer):
