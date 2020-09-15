@@ -34,6 +34,8 @@ urlpatterns = [
         name="schedule-update-for-all",
     ),
     path(
-        "extract-chats", views.extract_chats_from_sheet, name="extract-chats-from-sheet"
+        "extract-chats",
+        views.extract_clients_from_sheet,
+        name="extract-chats-from-sheet",
     ),
 ]

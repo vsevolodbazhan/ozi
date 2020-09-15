@@ -60,6 +60,24 @@ def extract_chats(values):
     return chats
 
 
+def extract_bots(values):
+    prefix = "bot/"
+    postfix = "/chats"
+
+    bots = []
+    for value in values:
+        start = value.find(prefix) + len(prefix)
+        end = value.find(postfix)
+        bots.append(value[start:end])
+
+    return bots
+
+
+def extract_clients(values):
+    chats, bots = extract_chats(values), extract_bots(values)
+    return chats, bots
+
+
 def test_extract_chats():
     values = [
         '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-678295990";"Mikhail")',
@@ -91,6 +109,99 @@ def test_extract_chats():
     ]
 
     assert extract_chats(values) == [
+        "JoL3SuysP0fiBy94e9aO-678295990",
+        "JoL3SuysP0fiBy94e9aO-304277490",
+        "JoL3SuysP0fiBy94e9aO-826341750",
+        "jmSSJNV8wLWQvooCDxwQ-159638777",
+        "jmSSJNV8wLWQvooCDxwQ-185599130",
+        "JoL3SuysP0fiBy94e9aO-845289386",
+        "JoL3SuysP0fiBy94e9aO-544237010",
+        "JoL3SuysP0fiBy94e9aO-304427935",
+        "jmSSJNV8wLWQvooCDxwQ-3385555",
+        "JoL3SuysP0fiBy94e9aO-807116467",
+        "jmSSJNV8wLWQvooCDxwQ-113378190",
+        "JoL3SuysP0fiBy94e9aO-175528246",
+        "JoL3SuysP0fiBy94e9aO-867721476",
+        "JoL3SuysP0fiBy94e9aO-430129191",
+        "JoL3SuysP0fiBy94e9aO-979515307",
+        "jmSSJNV8wLWQvooCDxwQ-35642923",
+        "jmSSJNV8wLWQvooCDxwQ-391613276",
+        "JoL3SuysP0fiBy94e9aO-797694863",
+        "JoL3SuysP0fiBy94e9aO-778055782",
+        "jmSSJNV8wLWQvooCDxwQ-108742628",
+        "JoL3SuysP0fiBy94e9aO-437488015",
+        "JoL3SuysP0fiBy94e9aO-152614263",
+        "JoL3SuysP0fiBy94e9aO-436369380",
+        "JoL3SuysP0fiBy94e9aO-347682187",
+        "JoL3SuysP0fiBy94e9aO-502662503",
+        "JoL3SuysP0fiBy94e9aO-147897633",
+    ]
+
+
+def test_extract_bots():
+    values = [
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-678295990";"Mikhail")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-304277490";"Varvara Bondarenko")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-826341750";"L")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-159638777";"Розалия Абдуллина")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-185599130";"Далия Исаева")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-845289386";"Лола")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-544237010";"Rusalena")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-304427935";"Hi, Mari.")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-3385555";"Александра Терентьева")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-807116467";"Лидия E")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-113378190";"Katerina Zhuravleva")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-175528246";"Evgenia Bystrova")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-867721476";"Виктория")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-430129191";"Denis Serezhin")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-979515307";"Рушания")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-35642923";"Марсель Гумер")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-391613276";"Martine La-Verne")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-797694863";"Ольга")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-778055782";"Денис Кораблев")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-108742628";"Диана Лукьянова")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-437488015";"khgrs")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-152614263";"Alina Slizova")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-436369380";"𝖄 / 𝕿")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-347682187";"Alex")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-502662503";"Гаянэ")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-147897633";"Алия Сафина")',
+    ]
+
+    assert extract_bots(values) == ["DMPfEuZ1TEPYDea26gBk"] * len(values)
+
+
+def test_extract_chats():
+    values = [
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-678295990";"Mikhail")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-304277490";"Varvara Bondarenko")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-826341750";"L")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-159638777";"Розалия Абдуллина")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-185599130";"Далия Исаева")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-845289386";"Лола")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-544237010";"Rusalena")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-304427935";"Hi, Mari.")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-3385555";"Александра Терентьева")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-807116467";"Лидия E")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-113378190";"Katerina Zhuravleva")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-175528246";"Evgenia Bystrova")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-867721476";"Виктория")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-430129191";"Denis Serezhin")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-979515307";"Рушания")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-35642923";"Марсель Гумер")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-391613276";"Martine La-Verne")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-797694863";"Ольга")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-778055782";"Денис Кораблев")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/jmSSJNV8wLWQvooCDxwQ-108742628";"Диана Лукьянова")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-437488015";"khgrs")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-152614263";"Alina Slizova")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-436369380";"𝖄 / 𝕿")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-347682187";"Alex")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-502662503";"Гаянэ")',
+        '=HYPERLINK("https://app.tomoru.ru/bot/DMPfEuZ1TEPYDea26gBk/chats/JoL3SuysP0fiBy94e9aO-147897633";"Алия Сафина")',
+    ]
+
+    assert extract_chats(values) == ["DMPfEuZ1TEPYDea26gBk"] * len(values), [
         "JoL3SuysP0fiBy94e9aO-678295990",
         "JoL3SuysP0fiBy94e9aO-304277490",
         "JoL3SuysP0fiBy94e9aO-826341750",

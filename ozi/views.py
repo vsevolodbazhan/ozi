@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.response import Response
 
-from sheets import extract_values, extract_chats
+from sheets import extract_values, extract_clients
 
 from . import exceptions
 from .constants import NUMBER_OF_SECONDS_IN_MINUTE
@@ -111,13 +111,13 @@ def update_for_all(request, callback):
     user = request.user
     mailing = require_mailing(request)
 
-    if chats := request.data.get("chats"):
-        bot = request.data["bot_id"]
-        clients = []
-        for chat in chats.split(", "):
-            client, _ = Client.objects.get_or_create(bot=bot, chat=chat)
-            client.subscriptions.add(mailing)
-            clients.append(client)
+    if bots := request.data.get("bots"):
+        if chats := request.data.get("clients"):
+            clients = []
+            for bot, chat in zip(bots, chats):
+                client, _ = Client.objects.get_or_create(bot=bot, chat=chat)
+                client.subscriptions.add(mailing)
+                clients.append(client)
     else:
         clients = Client.objects.get_subscribed(mailing)
 
@@ -191,7 +191,7 @@ def schedule_update_for_client(request):
 
 
 @api_view(["POST"])
-def extract_chats_from_sheet(request):
+def extract_clients_from_sheet(request):
     values = extract_values(
         spreadsheet_id=request.data["spreadsheet_id"],
         column=request.data["column"],
@@ -202,6 +202,7 @@ def extract_chats_from_sheet(request):
     if values is None:
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    chats = extract_chats(values)
-    data = {"chats": stringify(chats)}
+    clients = extract_clients(values)
+
+    data = {"bots": stringify(clients[0]), "chats": stringify(clients[1])}
     return Response(data=data, status=status.HTTP_200_OK)

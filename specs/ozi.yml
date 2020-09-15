@@ -333,6 +333,9 @@ paths:
                   $ref: "https://api.tomoru.ru/openapi#/components/schemas/TomoruConfig"
                 botId:
                   $ref: "https://api.tomoru.ru/openapi#/components/schemas/botId"
+                bots:
+                  type: string
+                  description: Список ботов
                 chats:
                   type: string
                   description: Список чатов
@@ -436,6 +439,9 @@ paths:
                   $ref: "https://api.tomoru.ru/openapi#/components/schemas/botId"
                 mailingId:
                   $ref: "#/components/schemas/MailingID"
+                bots:
+                  type: string
+                  description: Список ботов
                 chats:
                   type: string
                   description: Список чатов
@@ -468,10 +474,10 @@ paths:
         500:
           $ref: "#/components/responses/UnknownError"
 
-  /extract-chats:
+  /extract-clients:
     post:
-      operationId: extractChats
-      summary: Получить список чатов из Google Таблицы
+      operationId: extractClinets
+      summary: Получить список клиентов из Google Таблицы
       tags:
         - tomoru/call
       requestBody:
@@ -502,19 +508,23 @@ paths:
                 - rangeEnd
       responses:
         200:
-          description: Чаты найдены
+          description: Клиенты найдены
           content:
             application/json:
               schema:
                 type: object
                 properties:
+                  bots:
+                    type: string
+                    description: Список ботов
                   chats:
                     type: string
                     description: Список чатов
                 required:
+                  - bots
                   - chats
         204:
-          description: Чаты не найдены
+          description: Клиенты не найдены
         403:
           $ref: "#/components/responses/TokenError"
         500:
