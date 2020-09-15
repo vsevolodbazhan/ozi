@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ozi"
-version = "0.3.2"
+version = "0.3.3"
 description = "Mailings management microservice for Tomoru."
 authors = ["Vsevolod Bazhan <vsevozhan@yandex.ru>"]
 license = "MIT"
