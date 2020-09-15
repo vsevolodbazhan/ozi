@@ -7,6 +7,10 @@
 # Python
 __pycache__
 .pytest_cache
+*.egg-info
+
+# Django
+staticfiles
 
 # SQLite
 *.sqlite3
@@ -21,3 +25,6 @@ coverage.xml
 # Google Sheets API
 creds.json
 credentials.json
+
+# Tests
+.hypothesis
