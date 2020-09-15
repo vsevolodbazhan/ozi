@@ -8,7 +8,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view, authentication_classes
 from rest_framework.response import Response
 
-from sheets import extract_values
+from sheets import extract_values, extract_chats
 
 from . import exceptions
 from .constants import NUMBER_OF_SECONDS_IN_MINUTE
@@ -202,5 +202,6 @@ def extract_chats_from_sheet(request):
     if values is None:
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    data = {"chats": stringify(values)}
+    chats = extract_chats(values)
+    data = {"chats": stringify(chats)}
     return Response(data=data, status=status.HTTP_200_OK)
